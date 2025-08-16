@@ -283,8 +283,8 @@ public class CaregiverController {
 
     @PostMapping("/{id}/photo")
     public ResponseEntity<Map<String, Object>> uploadPhoto(
-            @PathVariable Integer id,
-            @RequestParam("file") MultipartFile file) {
+        @PathVariable Integer id,
+        @RequestParam("file") MultipartFile file) {
 
         try {
             // 檢查照服員是否存在
@@ -304,18 +304,17 @@ public class CaregiverController {
                 return createErrorResponse(HttpStatus.BAD_REQUEST, "只允許上傳圖片檔案");
             }
 
-            // 上傳檔案
-            String filePath = fileService.uploadFile(file, "caregiver-photos");
+            // 使用您的路徑結構：caregiver/caregiver_photo
+            String filePath = fileService.uploadFile(file, "caregiver/caregiver_photo");
 
             // 刪除舊照片
             CaregiverResponseDTO caregiver = caregiverOpt.get();
-            if (caregiver.getPhoto() != null) {
+            if (caregiver.getPhoto() != null && !caregiver.getPhoto().isEmpty()) {
                 fileService.deleteFile(caregiver.getPhoto());
             }
 
             // 更新照服員的照片路徑
             CaregiverRequestDTO updateDTO = new CaregiverRequestDTO();
-            // 複製現有資料
             updateDTO.setChineseName(caregiver.getChineseName());
             updateDTO.setGender(caregiver.getGender());
             updateDTO.setPhone(caregiver.getPhone());
@@ -324,7 +323,6 @@ public class CaregiverController {
             updateDTO.setAddress(caregiver.getAddress());
             updateDTO.setServiceArea(caregiver.getServiceArea());
             updateDTO.setIsActive(caregiver.getIsActive());
-            // 設定新的照片路徑
             updateDTO.setPhoto(filePath);
 
             CaregiverResponseDTO updatedCaregiver = caregiverService.updateCaregiver(id, updateDTO);
@@ -333,11 +331,16 @@ public class CaregiverController {
             response.put("success", true);
             response.put("message", "照片上傳成功");
             response.put("data", updatedCaregiver);
+            response.put("photo", filePath);
 
             return ResponseEntity.ok(response);
         } catch (IOException e) {
+            System.err.println("檔案上傳 IOException: " + e.getMessage());
+            e.printStackTrace();
             return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "檔案上傳失敗：" + e.getMessage());
         } catch (Exception e) {
+            System.err.println("照片上傳 Exception: " + e.getMessage());
+            e.printStackTrace();
             return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "更新失敗：" + e.getMessage());
         }
     }

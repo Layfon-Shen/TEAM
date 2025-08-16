@@ -126,75 +126,51 @@ INSERT INTO caregiver (
 ) VALUES 
 -- 照服員 1
 ('王美華', 0, '0912345678', 'wang.meihua@email.com', 5, 
- 'https://example.com/photos/wang_meihua.jpg', '台北市大安區忠孝東路四段100號', 
+ '/images/caregiver/caregiver_photo/ce233903-616a-48fa-9270-7f76c4468c42.jpg', '台北市大安區忠孝東路四段100號', 
  '台北市大安區', 4.5, 120, 540, 1),
 
 -- 照服員 2  
 ('陳志明', 1, '0923456789', 'chen.zhiming@email.com', 3, 
- 'https://example.com/photos/chen_zhiming.jpg', '新北市板橋區中山路二段50號', 
+ '/images/caregiver/caregiver_photo/01889a62-8e13-4830-8f82-72f43987ade1.jpg', '新北市板橋區中山路二段50號', 
  '新北市板橋區', 4.2, 85, 357, 1),
 
 -- 照服員 3
 ('李淑芳', 0, '0934567890', 'li.shufang@email.com', 8, 
- 'https://example.com/photos/li_shufang.jpg', '台中市西屯區台灣大道三段200號', 
+ '/images/caregiver/caregiver_photo/9e0ea10b-0992-4d79-829d-e0603090f144.jpg', '台中市西屯區台灣大道三段200號', 
  '台中市西屯區', 4.8, 200, 960, 1),
 
 -- 照服員 4
 ('張建國', 1, '0945678901', 'zhang.jianguo@email.com', 2, 
- 'https://example.com/photos/zhang_jianguo.jpg', '高雄市左營區博愛二路300號', 
+ '/images/caregiver/caregiver_photo/1d701e1d-f0c9-49ba-a077-4ebea8cec91d.jpg', '高雄市左營區博愛二路300號', 
  '高雄市左營區', 3.9, 45, 176, 1),
 
 -- 照服員 5
 ('劉惠玲', 0, '0956789012', 'liu.huiling@email.com', 6, 
- 'https://example.com/photos/liu_huiling.jpg', '台南市中西區中正路150號', 
+ '/images/caregiver/caregiver_photo/bff42fae-e3ff-476b-b0c6-3a7b56c1aede.jpg', '台南市中西區中正路150號', 
  '台南市中西區', 4.6, 160, 736, 1),
 
 -- 照服員 6
 ('黃俊傑', 1, '0967890123', 'huang.junjie@email.com', 4, 
- 'https://example.com/photos/huang_junjie.jpg', '桃園市中壢區中央路250號', 
+ '/images/caregiver/caregiver_photo/f3dee67e-960a-48f0-bbe9-914654e9d1b0.jpg', '桃園市中壢區中央路250號', 
  '桃園市中壢區', 4.1, 95, 390, 1),
 
 -- 照服員 7
 ('吳秀英', 0, '0978901234', 'wu.xiuying@email.com', 7, 
- 'https://example.com/photos/wu_xiuying.jpg', '新竹市東區光復路一段180號', 
+ '/images/caregiver/caregiver_photo/4f1f3b46-29ed-40f0-a514-0a8f0d68afe3.jpg', '新竹市東區光復路一段180號', 
  '新竹市東區', 4.7, 180, 846, 1),
 
 -- 照服員 8
 ('林文華', 1, '0989012345', 'lin.wenhua@email.com', 1, 
- 'https://example.com/photos/lin_wenhua.jpg', '嘉義市西區民生北路120號', 
+ '/images/caregiver/caregiver_photo/71ee2b27-d813-41d5-a0f4-a216f14caf6c.jpg', '嘉義市西區民生北路120號', 
  '嘉義市西區', 3.8, 25, 95, 1),
 
 -- 照服員 9
 ('蔡雅婷', 0, '0990123456', 'cai.yating@email.com', 9, 
- 'https://example.com/photos/cai_yating.jpg', '彰化市中正路二段80號', 
+ '/images/caregiver/caregiver_photo/64b271ed-8d19-43dd-b6fa-7906e51d452b.jpg', '彰化市中正路二段80號', 
  '彰化市', 4.9, 250, 1225, 1),
 
 -- 照服員 10
 ('鄭大偉', 1, '0901234567', 'zheng.dawei@email.com', 3, 
- 'https://example.com/photos/zheng_dawei.jpg', '屏東市中山路350號', 
- '屏東市', 4.0, 70, 280, 1),
+ '/images/caregiver/caregiver_photo/04485c31-2d66-4775-8ed8-05028885e936.jpg', '屏東市中山路350號', 
+ '屏東市', 4.0, 70, 280, 1);
 
--- 照服員 11
-('趙美玲', 0, '0912345670', 'zhao.meiling@email.com', 5, 
- 'https://example.com/photos/zhao_meiling.jpg', '宜蘭市中山路五段90號', 
- '宜蘭市', 4.3, 110, 473, 1),
-
--- 照服員 12
-('周志豪', 1, '0923456701', 'zhou.zhihao@email.com', 2, 
- 'https://example.com/photos/zhou_zhihao.jpg', '花蓮市中正路400號', 
- '花蓮市', 3.7, 35, 130, 1),
-
--- 照服員 13
-('徐慧君', 0, '0934567012', 'xu.huijun@email.com', 6, 
- 'https://example.com/photos/xu_huijun.jpg', '台東市中華路一段220號', 
- '台東市', 4.4, 140, 616, 1),
-
--- 照服員 14
-('孫立明', 1, '0945670123', 'sun.liming@email.com', 4, 
- 'https://example.com/photos/sun_liming.jpg', '基隆市仁愛區愛一路160號', 
- '基隆市仁愛區', 4.2, 88, 370, 0),
-
--- 照服員 15
-('馬淑華', 0, '0956701234', 'ma.shuhua@email.com', 10, 
- 'https://example.com/photos/ma_shuhua.jpg', '苗栗市中正路680號', 
- '苗栗市', 4.8, 300, 1440, 1);

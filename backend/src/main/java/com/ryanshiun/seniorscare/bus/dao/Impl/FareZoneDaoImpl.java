@@ -24,7 +24,7 @@ import com.ryanshiun.seniorscare.bus.rowmapper.FareZoneRowMapper;
  */
 
 @Repository
-public class FareZoneDaoImpl implements FareZoneDAO {
+public class FareZoneDAOImpl implements FareZoneDAO {
 	
 	
 

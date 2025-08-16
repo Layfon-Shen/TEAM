@@ -18,19 +18,19 @@ import lombok.NoArgsConstructor;
 public class Reply {
 	
 	@JsonProperty("REPLY_ID")
-	private Long replyId;               //後台回覆編號
+	private int replyId;               //後台回覆編號
 	
 	@JsonProperty("COMMENT_ID")
-	private Long commentId;             //會員回覆編號
+	private int commentId;             //會員回覆編號
 	
 	@JsonProperty("MEMBER_ID")
-	private Long memberId;              //會員編號
+	private int memberId;              //會員編號
 	
-	@JsonProperty("USER_ID")
-	private Long userId;                //員工編號
+	@JsonProperty("EMP_ID")
+	private int empId;                //員工編號
 	
-	@JsonProperty("USER_REPLY")
-	private String userReply;           //後台回覆內容
+	@JsonProperty("EMP_TEXT")
+	private String empText;           //後台回覆內容
 	
 	@JsonProperty("REPLY_AT")
 	private LocalDateTime replyAT;      //後台回覆時間

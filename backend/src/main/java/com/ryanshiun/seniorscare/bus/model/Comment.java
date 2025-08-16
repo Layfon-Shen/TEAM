@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * "會員評論表"，
- * 一個純資料物件（Plain Old Java Object，POJO），與 rehabus 資料表對應的一筆車輛資料
+ * 一個純資料物件（Plain Old Java Object，POJO），與 Comment 資料表對應的一筆車輛資料
  * 用來封裝資料，可以是資料庫的一筆記錄，也可以是前端送來的請求參數
  */
 
@@ -18,13 +18,13 @@ import lombok.NoArgsConstructor;
 public class Comment {
 	
 	@JsonProperty("COMMENT_ID")
-	private Long commentId;              //回覆編號
+	private int commentId;              //回覆編號
 	
 	@JsonProperty("RESERVATION_ID")
-	private Long reservationId;          //預約單號
+	private int reservationId;          //預約單號
 	
 	@JsonProperty("MEMBER_ID")
-	private Long memberId;               //會員編號 
+	private int memberId;               //會員編號 
 	
 	@JsonProperty("RATING")
 	private int rating;                  //評分，1-5

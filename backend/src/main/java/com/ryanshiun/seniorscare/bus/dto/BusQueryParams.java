@@ -2,8 +2,9 @@ package com.ryanshiun.seniorscare.bus.dto;
 
 import lombok.Data;
 
+/**定義模糊(區域)查詢的內容*/
+
 @Data
-//定義模糊(區域)查詢的內容
 public class BusQueryParams {
 	
 	//區域查詢一般座位數量(最少)

@@ -311,14 +311,15 @@ const changePage = (page) => {
 };
 
 // 方法：處理照片 URL
+// 在 CaregiverTable.vue 和 EditCareWorker.vue 中
 const getPhotoUrl = (photoPath) => {
-  
+
   
   if (!photoPath) {
     return defaultAvatar;
   }
   
-  // 如果是完整的 URL（以 http:// 或 https:// 開頭）
+  // 如果是完整的 URL
   if (photoPath.startsWith('http://') || photoPath.startsWith('https://')) {
     return photoPath;
   }
@@ -328,8 +329,11 @@ const getPhotoUrl = (photoPath) => {
     return photoPath;
   }
   
-  // 如果是相對路徑（後端可能返回的是相對路徑），轉為絕對路徑
-  const fullPath = `http://localhost:8080${photoPath.startsWith('/') ? '' : '/'}${photoPath}`;
+  // 統一處理相對路徑
+  // 移除可能的前導斜線，然後加上正確的基礎 URL
+  const cleanPath = photoPath.startsWith('/') ? photoPath : '/' + photoPath;
+  const fullPath = `http://localhost:8080${cleanPath}`;
+  
   console.log('轉換為完整路徑:', fullPath);
   return fullPath;
 };

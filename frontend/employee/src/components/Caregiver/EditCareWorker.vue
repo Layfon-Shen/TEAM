@@ -418,38 +418,31 @@ export default {
         const updatedCaregiver = await updateCaregiver(caregiverId, form);
         console.log('更新成功:', updatedCaregiver);
         
-        // 如果有上傳照片，執行上傳
-        if (uploadFile.value) {
-          try {
-            console.log('開始上傳照片，檔案大小:', uploadFile.value.size, '檔案類型:', uploadFile.value.type);
-            const photoResponse = await caregiverApi.uploadPhoto(caregiverId, uploadFile.value);
-            console.log('照片上傳成功，回應數據:', photoResponse);
-            
-            // 提取照片路徑（這裡可能需要根據後端 API 的實際回傳格式調整）
-            if (photoResponse && photoResponse.data) {
-              console.log('照片上傳回應:', photoResponse.data);
-              if (photoResponse.data.photo || photoResponse.data.path || photoResponse.data.url) {
-                const photoPath = photoResponse.data.photo || photoResponse.data.path || photoResponse.data.url;
-                console.log('獲取的照片路徑:', photoPath);
-                form.photo = photoPath;
-              }
-            }
-            
-            // 確保獲取最新資料，包含更新後的照片路徑
-            const refreshedData = await loadCaregiverById(caregiverId);
-            console.log('更新照片後重新載入的照服員資料:', refreshedData);
-            
-            // 強制更新照片預覽
-            if (refreshedData && refreshedData.photo) {
-              imagePreview.value = getPhotoUrl(refreshedData.photo);
-              console.log('更新後的照片預覽路徑:', imagePreview.value);
-            }
-          } catch (photoError) {
-            console.error('照片上傳失敗:', photoError);
-            alert('照服員資料已更新，但照片上傳失敗，請再試一次。');
-          }
-        }
-        
+// 修改照片上傳成功後的處理邏輯
+if (uploadFile.value) {
+  try {
+    console.log('開始上傳照片，檔案大小:', uploadFile.value.size, '檔案類型:', uploadFile.value.type);
+    const photoResponse = await caregiverApi.uploadPhoto(caregiverId, uploadFile.value);
+    console.log('照片上傳成功，回應數據:', photoResponse);
+    
+    // 更新表單中的照片路徑
+    if (photoResponse && photoResponse.data) {
+      // 優先使用回應中的 photo 欄位
+      const photoPath = photoResponse.data.photo || 
+                       photoResponse.data.data?.photo || 
+                       photoResponse.data.path;
+      
+      if (photoPath) {
+        console.log('獲取的照片路徑:', photoPath);
+        form.photo = photoPath;
+        imagePreview.value = getPhotoUrl(photoPath);
+      }
+    }
+  } catch (photoError) {
+    console.error('照片上傳失敗:', photoError);
+    alert('照服員資料已更新，但照片上傳失敗，請再試一次。');
+  }
+}
         showToast({
           title: '更新成功',
           message: `更新照服員: ${form.chineseName} 資料`,

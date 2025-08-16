@@ -34,7 +34,7 @@ import com.ryanshiun.seniorscare.bus.rowmapper.RehabusRowMapper;
  */
 
 @Repository
-public class BusDaoImpl implements BusDAO {
+public class BusDAOImpl implements BusDAO {
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -76,8 +76,8 @@ public class BusDaoImpl implements BusDAO {
 	public Rehabus updateBus(BusRequest busRequest) {
 		final String sql = "UPDATE rehabus SET "
 				+ "car_dealership = :carDealership, bus_brand = :busBrand, bus_model = :busModel, "
-				+ "seat_capacity = :seatCapacity, wheelchair_capacity = :wheelchairCapacity, status = :status "
-				+ " WHERE bus_id = :busId";
+				+ "seat_capacity = :seatCapacity, wheelchair_capacity = :wheelchairCapacity, license_plate = :licensePlate, "
+				+ "status = :status WHERE bus_id = :busId";
 		
 		Map<String, Object> uBus = new HashMap<>();
 		uBus.put("busId", busRequest.getBusId());
