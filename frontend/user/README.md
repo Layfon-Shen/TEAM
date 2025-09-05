@@ -1,7 +1,13 @@
 ## Project setup 打開專案先在跟目錄下面執行
 ```
-npm i pinia pinia-plugin-persistedstate axios Aos
+npm i pinia pinia-plugin-persistedstate axios aos
+
+## 重要更新 !
+npm install  
 ```
+
+##安裝google套件
+npm i @googlemaps/js-api-loader
 
 ### 啟動伺服器 (第一次會比較久)
 ```

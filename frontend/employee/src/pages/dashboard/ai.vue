@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard-main-body">
-    <Breadcrumb title="Dashboard" :breadcrumbs="[{ name: 'Ai' }]" />
      
     <AiWidgets />
 
@@ -8,10 +7,6 @@
       <SalesStatistic />
       <TotalSubscriber />
       <UserOverview />
-      <LatestUser /> <!-- Latest Register & Latest Subscribe -->
-      <TopPerformer />
-      <CountriesMap />
-      <GeneratedContent />
     </div>
   </div>
 </template>
@@ -24,10 +19,8 @@ import AiWidgets from "@/components/dashboard/Ai/AiWidgets.vue";
 import SalesStatistic from "@/components/dashboard/Ai/SalesStatistic.vue";
 import TotalSubscriber from "@/components/dashboard/Ai/TotalSubscriber.vue"
 import UserOverview from "@/components/dashboard/Ai/UserOverview.vue"; 
-import LatestUser from "@/components/dashboard/Ai/LatestUser.vue"; 
-import TopPerformer from "@/components/dashboard/Ai/TopPerformer.vue"; 
-import CountriesMap from "@/components/dashboard/Ai/CountriesMap.vue"
-import GeneratedContent from "@/components/dashboard/Ai/GeneratedContent.vue"
+
+
 
 export default {
   name: "Ai",
@@ -36,13 +29,9 @@ export default {
     apexchart: ApexCharts,
     Icon,
     AiWidgets,
-    LatestUser,
     SalesStatistic,
     TotalSubscriber,
     UserOverview,
-    TopPerformer,
-    CountriesMap,
-    GeneratedContent,
   },
 };
 </script>

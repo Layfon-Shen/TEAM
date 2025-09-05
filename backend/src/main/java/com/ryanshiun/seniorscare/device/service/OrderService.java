@@ -6,6 +6,10 @@ import com.ryanshiun.seniorscare.device.model.Order;
 
 import java.util.List;
 
+import com.ryanshiun.seniorscare.device.dto.GuestCheckoutRequest;
+
+
+
 public interface OrderService {
 
 
@@ -26,4 +30,14 @@ public interface OrderService {
 
     //更新訂單付款資訊
     void updatePayment(Integer id, PaymentUpdateRequest req);
+
+    //付款可用COD或 line pay
+    void updatePaymentMethod(Integer id, PaymentMethodUpdateRequest req);
+
+    //刪除訂單
+    void delete(Integer id);
+
+
+
+
 }

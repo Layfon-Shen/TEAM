@@ -5,7 +5,7 @@ package com.ryanshiun.seniorscare.member.controller.login;
 import com.ryanshiun.seniorscare.member.dto.employee.AuthResponse;
 import com.ryanshiun.seniorscare.member.dto.employee.EmployeeProfileDto;
 import com.ryanshiun.seniorscare.member.dto.employee.LoginDto;
-import com.ryanshiun.seniorscare.member.service.JwtTokenProvider;
+import com.ryanshiun.seniorscare.security.JwtTokenProvider;
 import com.ryanshiun.seniorscare.member.service.employee.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,7 +34,11 @@ public class AuthController {
         this.jwtProvider = jwtProvider;
         this.employeeService = employeeService;
     }
-
+    /**
+     * 員工登入
+     * @param dto 包含 email 和 password 的登入資料傳輸物件
+     * @return ResponseEntity 包含 JWT 和員工基本資料的回應
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto dto) {
         try {
@@ -47,13 +49,13 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             // 2. 產生 JWT
-            String token = jwtProvider.generateToken(auth);
+            String token = jwtProvider.generateEmployeeToken(auth);
 
             // 3. 撈使用者基本資料
-            EmployeeProfileDto me = employeeService.passEmpInfo(dto.getEmail());
+            EmployeeProfileDto employeeProfileDto = employeeService.passEmpInfo(dto.getEmail());
 
             // 4. 回傳
-            AuthResponse response = new AuthResponse(token, me);
+            AuthResponse response = new AuthResponse(token, employeeProfileDto);
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
             // 1) 密碼錯誤 → 401

@@ -150,6 +150,7 @@ public class CaregiverServiceImpl implements CaregiverService {
         responseDTO.setIsActive(caregiver.getIsActive());
         responseDTO.setCreatedAt(caregiver.getCreatedAt());
         responseDTO.setUpdatedAt(caregiver.getUpdatedAt());
+        responseDTO.setSelfIntroduction(caregiver.getSelfIntroduction()); // 修正：新增自我介紹欄位
         return responseDTO;
     }
 
@@ -163,7 +164,9 @@ public class CaregiverServiceImpl implements CaregiverService {
         caregiver.setPhoto(requestDTO.getPhoto());
         caregiver.setAddress(requestDTO.getAddress());
         caregiver.setServiceArea(requestDTO.getServiceArea());
-        caregiver.setAverageRating(requestDTO.getAverageRating() != null ? requestDTO.getAverageRating() : BigDecimal.ZERO);
+        caregiver.setSelfIntroduction(requestDTO.getSelfIntroduction()); // 修正：新增自我介紹欄位
+        caregiver.setAverageRating(
+                requestDTO.getAverageRating() != null ? requestDTO.getAverageRating() : BigDecimal.ZERO);
         caregiver.setTotalRatings(requestDTO.getTotalRatings() != null ? requestDTO.getTotalRatings() : 0);
         caregiver.setTotalPoints(requestDTO.getTotalPoints() != null ? requestDTO.getTotalPoints() : 0);
         caregiver.setIsActive(requestDTO.getIsActive() != null ? requestDTO.getIsActive() : true);
@@ -179,7 +182,7 @@ public class CaregiverServiceImpl implements CaregiverService {
         caregiver.setPhoto(requestDTO.getPhoto());
         caregiver.setAddress(requestDTO.getAddress());
         caregiver.setServiceArea(requestDTO.getServiceArea());
-
+        caregiver.setSelfIntroduction(requestDTO.getSelfIntroduction());
         if (requestDTO.getAverageRating() != null) {
             caregiver.setAverageRating(requestDTO.getAverageRating());
         }

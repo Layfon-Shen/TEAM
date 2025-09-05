@@ -48,4 +48,14 @@ public interface OrderDao {
 
     /** 由訂單批次扣庫存（避免負庫存） */
     void updateInStock(Integer orderId);
+
+    /** 更新付款方式（COD / LINE_PAY） */
+    void updatePaymentMethod(Integer id, String paymentMethod);
+
+    // 刪掉這筆訂單的所有明細
+    void deleteOrderItems(Integer orderId);
+
+    // 刪掉訂單主檔
+    int deleteOrder(Integer orderId);
+
 }

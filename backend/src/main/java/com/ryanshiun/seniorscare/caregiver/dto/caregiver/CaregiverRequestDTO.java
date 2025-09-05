@@ -51,4 +51,7 @@ public class CaregiverRequestDTO {
     private Integer totalPoints;
 
     private Boolean isActive = true;
+
+  @Size(max = 1000, message = "自我介紹長度不能超過1000字元")
+  private String selfIntroduction;
 }

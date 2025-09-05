@@ -53,6 +53,13 @@ public class RoomCommentServiceImpl implements RoomCommentService {
     }
 
     // ===== R =====
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<RoomComment> findAll() {
+        return dao.findAll();
+    }
+    
     @Override
     @Transactional(readOnly = true)
     public RoomComment findById(int id) {

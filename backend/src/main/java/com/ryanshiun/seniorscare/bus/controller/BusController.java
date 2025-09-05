@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 @Validated
 @RestController
-@RequestMapping("/rehabus")
+@RequestMapping("/api/rehabus")
 @CrossOrigin(
 		originPatterns = "http://localhost:517*",
 				methods = {

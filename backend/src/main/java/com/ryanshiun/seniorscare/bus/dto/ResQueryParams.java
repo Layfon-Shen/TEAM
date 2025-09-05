@@ -1,7 +1,6 @@
 package com.ryanshiun.seniorscare.bus.dto;
 
 import java.time.LocalDate;
-
 import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,13 +21,14 @@ public class ResQueryParams {
 	// 根據地區查詢(到達地區)
 	private Integer endZone;
 
+	// 根據預約時間查詢(天+時間)
+	@DateTimeFormat(pattern = "yyyy-MM-dd['T'][' ']HH:mm[:ss]")
+	private LocalDateTime scheduledAt;
+	
 	// 根據預約時間查詢(天)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private LocalDate scheduledAt;
+	private LocalDate scheduledDate;
 
-	// 根據預約時間查詢(天+時間)
-	@DateTimeFormat(pattern = "yyyy-MM-dd['T'][' ']HH:mm")
-	private LocalDateTime scheduledAtTime;
 
 	// 起點地址
 	private String startAddress;

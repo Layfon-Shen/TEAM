@@ -19,6 +19,7 @@ public interface RoomCommentService {
     boolean deleteById(int id);
 
     // R
+    List<RoomComment> findAll();
     RoomComment findById(int id);
     List<RoomComment> findByRoomType(int roomTypeId, Boolean approved); // approved=null 代表全部
     List<RoomComment> findByMember(int memberId, Boolean approved);

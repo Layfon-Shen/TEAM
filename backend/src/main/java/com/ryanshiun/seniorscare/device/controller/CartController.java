@@ -11,6 +11,7 @@ import com.ryanshiun.seniorscare.device.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -31,8 +32,9 @@ public class CartController {
     /** 建立或取得購物車 */
     @PostMapping
     public CartResponse createOrGetCart(
-            @RequestParam(required = false) Integer memberId,
-            @RequestParam(required = false) String guestToken) {
+            @RequestParam(required = false) String guestToken,
+            Authentication authentication) {
+        Integer memberId = Integer.parseInt(authentication.getName());
         return cartService.createOrGetCart(memberId, guestToken);
     }
 

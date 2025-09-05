@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,6 +95,7 @@ public class EmployeeController {
      * @return 建立後的員工資料，回傳 201
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmployeeProfileDto> addEmployee(@RequestBody @Valid EmployeeCreateDto employeeCreateDto) {
         // 取得新員工的 id
         Integer employeeId = employeeService.addEmployee(employeeCreateDto);
@@ -134,6 +136,7 @@ public class EmployeeController {
      * @return 更新後的員工資料，若不存在則回傳 404
      */
     @PutMapping("/{empId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmployeeProfileDto> toggleEmployeeStatus(
             @PathVariable Integer empId
     ) {
@@ -152,6 +155,7 @@ public class EmployeeController {
      * @return 回傳該員工新權限，若不存在則回傳 404
      */
     @PutMapping("/{empId}/roles")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<List<EmpRole>> updateEmployeeRole(
             @PathVariable Integer empId,
             @RequestBody List<Integer> newRoleIds

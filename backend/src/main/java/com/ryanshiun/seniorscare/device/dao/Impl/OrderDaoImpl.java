@@ -18,6 +18,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+
 /**
  * 訂單 DAO 實作：僅進行 SQL 存取，不做流程控制
  */
@@ -120,14 +124,25 @@ public class OrderDaoImpl implements OrderDao {
     /** 更新付款狀態與交易編號 */
     @Override
     public void updatePayment(Integer id, String paymentStatus, String txnNo) {
-        String sql = "UPDATE orders SET payment_status = :ps, transaction_no = :txn WHERE id = :id";
-        jdbc.update(sql, Map.of("ps", paymentStatus, "txn", txnNo, "id", id));
+        String sql = """
+        UPDATE orders
+           SET payment_status = :ps,
+               transaction_no = :txn,
+               paid_at = CASE WHEN :ps = 'PAID' THEN SYSDATETIME() ELSE paid_at END
+         WHERE id = :id
+    """;
+        jdbc.update(sql, java.util.Map.of("ps", paymentStatus, "txn", txnNo, "id", id));
     }
 
     /** 查訂單明細 */
     @Override
     public List<OrderItem> findItems(Integer orderId) {
-        String sql = "SELECT * FROM order_item WHERE order_id = :oid";
+        String sql = """
+                SELECT *
+                FROM order_item AS oi
+                LEFT JOIN device AS d ON d.id = oi.device_id
+                WHERE oi.order_id = :oid
+                """;
         return jdbc.query(sql, Map.of("oid", orderId), new OrderItemRowMapper());
     }
 
@@ -171,4 +186,26 @@ public class OrderDaoImpl implements OrderDao {
             throw new IllegalStateException("扣庫存筆數不一致，已回滾");
         }
     }
+
+    @Override
+    public void updatePaymentMethod(Integer id, String paymentMethod) {
+        String sql = "UPDATE orders SET payment_method = :m WHERE id = :id AND is_deleted = 0";
+        jdbc.update(sql, java.util.Map.of("m", paymentMethod, "id", id));
+    }
+
+    // 刪掉這筆訂單的所有明細
+    @Override
+    public void deleteOrderItems(Integer orderId) {
+        String sql = "DELETE FROM order_item WHERE order_id = :id";
+        jdbc.update(sql, java.util.Map.of("id", orderId));
+    }
+
+    // 刪掉訂單主檔
+    @Override
+    public int deleteOrder(Integer orderId) {
+        String sql = "DELETE FROM orders WHERE id = :id";
+        return jdbc.update(sql, java.util.Map.of("id", orderId));
+    }
+
+
 }

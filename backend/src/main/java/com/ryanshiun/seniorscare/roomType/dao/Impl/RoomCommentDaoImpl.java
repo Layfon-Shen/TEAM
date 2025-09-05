@@ -90,6 +90,12 @@ public class RoomCommentDaoImpl implements RoomCommentDao {
     }
 
     // ===== R =====
+    
+    @Override
+    public List<RoomComment> findAll() {
+        String sql = "SELECT * FROM room_comment ORDER BY created_at DESC";
+        return jdbc.query(sql, ROW_MAPPER);
+    }
     @Override
     public RoomComment findById(int id) {
         String sql = "SELECT * FROM room_comment WHERE id = :id";

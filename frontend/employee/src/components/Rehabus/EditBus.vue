@@ -5,6 +5,7 @@
         <div class="col-xxl-6 col-xl-8 col-lg-10">
           <div class="card border">
             <div class="card-body">
+              <h6 class="text-md text-primary-light mb-16">編輯復康巴士資料</h6>
 
               <!-- 載入中顯示 -->
               <div v-if="loading" class="text-center py-5">
@@ -24,25 +25,14 @@
                 <div class="mb-24 mt-16">
                   <div class="avatar-upload">
                     <div class="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">
-                      <input
-                        type="file"
-                        id="imageUpload"
-                        accept=".png, .jpg, .jpeg"
-                        @change="onImageChange"
-                        hidden
-                      />
-                      <label
-                        for="imageUpload"
-                        class="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle"
-                      >
+                      <input type="file" id="imageUpload" accept=".png, .jpg, .jpeg" @change="onImageChange" hidden />
+                      <label for="imageUpload"
+                        class="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle">
                         <iconify-icon icon="solar:camera-outline" class="icon"></iconify-icon>
                       </label>
                     </div>
                     <div class="avatar-preview">
-                      <div
-                        v-bind:style="{ backgroundImage: 'url(' + imagePreview + ')' }"
-                        id="imagePreview"
-                      ></div>
+                      <div v-bind:style="{ backgroundImage: 'url(' + imagePreview + ')' }" id="imagePreview"></div>
                     </div>
                   </div>
                 </div>
@@ -53,13 +43,8 @@
                     <label for="carDealership" class="form-label fw-semibold text-primary-light text-sm mb-8">
                       車行名稱 <span class="text-danger-600">*</span>
                     </label>
-                    <input
-                      v-model="form.carDealership"
-                      type="text"
-                      class="form-control radius-8"
-                      id="carDealership"
-                      placeholder="請輸入車行名稱"
-                    />
+                    <input v-model="form.carDealership" type="text" class="form-control radius-8" id="carDealership"
+                      placeholder="請輸入車行名稱" />
                   </div>
 
                   <!-- 汽車廠牌欄位 -->
@@ -67,13 +52,8 @@
                     <label for="busBrand" class="form-label fw-semibold text-primary-light text-sm mb-8">
                       汽車廠牌 <span class="text-danger-600">*</span>
                     </label>
-                    <input
-                      v-model="form.busBrand"
-                      type="text"
-                      class="form-control radius-8"
-                      id="busBrand"
-                      placeholder="請輸入汽車廠牌"
-                    />
+                    <input v-model="form.busBrand" type="text" class="form-control radius-8" id="busBrand"
+                      placeholder="請輸入汽車廠牌" />
                   </div>
 
                   <!-- 汽車型號欄位 -->
@@ -81,13 +61,8 @@
                     <label for="busModel" class="form-label fw-semibold text-primary-light text-sm mb-8">
                       型號 <span class="text-danger-600">*</span>
                     </label>
-                    <input
-                      v-model="form.busModel"
-                      type="text"
-                      class="form-control radius-8"
-                      id="busModel"
-                      placeholder="請輸入汽車型號"
-                    />
+                    <input v-model="form.busModel" type="text" class="form-control radius-8" id="busModel"
+                      placeholder="請輸入汽車型號" />
                   </div>
 
                   <!-- 一般座位數量 -->
@@ -95,14 +70,8 @@
                     <label for="seatCapacity" class="form-label fw-semibold text-primary-light text-sm mb-8">
                       一般座位數量 <span class="text-danger-600">*</span>
                     </label>
-                    <input
-                      v-model.number="form.seatCapacity"
-                      type="number"
-                      min="0"
-                      class="form-control radius-8"
-                      id="seatCapacity"
-                      placeholder="請輸入一般座位數量"
-                    />
+                    <input v-model.number="form.seatCapacity" type="number" min="0" class="form-control radius-8"
+                      id="seatCapacity" placeholder="請輸入一般座位數量" />
                   </div>
 
                   <!-- 輪椅座位數量 -->
@@ -110,14 +79,8 @@
                     <label for="wheelchairCapacity" class="form-label fw-semibold text-primary-light text-sm mb-8">
                       輪椅座位數量 <span class="text-danger-600">*</span>
                     </label>
-                    <input
-                      v-model.number="form.wheelchairCapacity"
-                      type="number"
-                      min="0"
-                      class="form-control radius-8"
-                      id="wheelchairCapacity"
-                      placeholder="請輸入輪椅座位數量"
-                    />
+                    <input v-model.number="form.wheelchairCapacity" type="number" min="0" class="form-control radius-8"
+                      id="wheelchairCapacity" placeholder="請輸入輪椅座位數量" />
                   </div>
 
                   <!-- 車牌號碼 -->
@@ -125,13 +88,8 @@
                     <label for="licensePlate" class="form-label fw-semibold text-primary-light text-sm mb-8">
                       車牌號碼 <span class="text-danger-600">*</span>
                     </label>
-                    <input
-                      v-model="form.licensePlate"
-                      type="text"
-                      class="form-control radius-8"
-                      id="licensePlate"
-                      placeholder="請輸入車牌號碼"
-                    />
+                    <input v-model="form.licensePlate" type="text" class="form-control radius-8" id="licensePlate"
+                      placeholder="請輸入車牌號碼" />
                   </div>
 
                   <!-- 派遣狀態 -->
@@ -140,44 +98,32 @@
                       派遣狀態 <span class="text-danger-600">*</span>
                     </label>
                     <div class="position-relative">
-                    <select v-model="form.status" class="form-control radius-8 form-select" id="status">
-                      <option value="">請選擇派遣狀態</option>
-                      <option value="available">可派遣</option>
-                      <option value="dispatched">已派遣</option>
-                      <option value="maintenance">維修中</option>
-                    </select>
-                 
-                    <!-- 派遣狀態指示圖示 -->
-        <div class="position-absolute top-50 end-0 translate-middle-y me-10 d-flex align-items-center">
-          <span 
-            v-if="form.status" 
-            :class="getStatusClass(form.status)" 
-            class="status-badge d-inline-block rounded-circle me-2">
-          </span>
-          <span class="text-muted">{{ getStatusText(form.status) }}</span>
-        </div>
-      </div>
-    </div>
+                      <select v-model="form.status" class="form-control radius-8 form-select" id="status">
+                        <option value="">請選擇派遣狀態</option>
+                        <option value="available">可派遣</option>
+                        <option value="dispatched">已派遣</option>
+                        <option value="maintenance">維修中</option>
+                      </select>
+
+
+                    </div>
+                  </div>
 
 
 
 
                   <!-- 按鈕區域 -->
-    <div class="d-flex align-items-center justify-content-center gap-3">
-      <button
-        type="button"
-        class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-        @click="cancelForm"
-      >
-        取消
-      </button>
-      <button
-        type="submit"
-        class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
-      >
-        更新
-      </button>
-    </div>
+                  <div class="d-flex align-items-center justify-content-center gap-3">
+                    <button type="button"
+                      class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
+                      @click="cancelForm">
+                      取消
+                    </button>
+                    <button type="submit"
+                      class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                      更新
+                    </button>
+                  </div>
 
 
                 </form>
@@ -193,9 +139,9 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import busImage from "@/assets/images/bus/bus.jpg"; 
+import busImage from "@/assets/images/bus.jpg";
 import { rehabusService } from '@/services/rehabusService';
-import { useToast } from '@/composables/useToast'; // 引入 toast 元件
+import { useToast } from '@/composables/useToast';
 
 export default {
   name: 'EditBus',
@@ -210,7 +156,7 @@ export default {
   // 聲明組件發射的事件
   emits: ['edit-success'],
   setup(props, { emit }) {
-
+    const { showToast } = useToast();
     // 表單資料
     const form = ref({
       carDealership: '',
@@ -224,15 +170,12 @@ export default {
 
     // 圖片預覽
     const imagePreview = ref(busImage);
-    
+
     // 載入狀態與錯誤訊息
     const loading = ref(true);
     const error = ref(null);
 
     const router = useRouter();
-
-    // 使用 Toast 通知功能
-    const { showToast } = useToast(); 
 
     /**
      * 載入巴士資料
@@ -241,7 +184,7 @@ export default {
       try {
         loading.value = true;
         const busData = await rehabusService.getBusById(props.busId);
-        
+
         // 將獲取的資料填入表單
         form.value = {
           carDealership: busData.carDealership || '',
@@ -252,7 +195,7 @@ export default {
           licensePlate: busData.licensePlate || '',
           status: busData.status || 'available'
         };
-        
+
         // 如果有圖片，更新圖片預覽
         if (busData.image) {
           imagePreview.value = busData.image;
@@ -293,17 +236,21 @@ export default {
     const submitForm = async () => {
       try {
         // 表單驗證
-        if (!form.value.carDealership || 
-            !form.value.busBrand || 
-            !form.value.busModel ||
-            !form.value.licensePlate ||
-            !form.value.status) {
-          alert('請填寫所有必填欄位');
+        if (!form.value.carDealership ||
+          !form.value.busBrand ||
+          !form.value.busModel ||
+          !form.value.licensePlate ||
+          !form.value.status) {
+          showToast({
+            title: '缺少欄位',
+            message: errorMessage,
+            type: 'error'
+          });
           return;
         }
 
         // 呼叫服務層更新巴士資料
-        await rehabusService.updateBus(props.busId, {
+        const updatedBus = await rehabusService.updateBus(props.busId, {
           carDealership: form.value.carDealership,
           busBrand: form.value.busBrand,
           busModel: form.value.busModel,
@@ -312,38 +259,39 @@ export default {
           licensePlate: form.value.licensePlate,
           status: form.value.status
         });
-        // 顯示操作成功通知
+
+        console.log('更新成功，返回資料:', updatedBus);
+
         showToast({
-          title: '巴士修改成功',
-          message: `巴士已修改`,
+          title: '更新成功',
+          message: '復康巴士資料已成功更新！',
           type: 'success'
         });
 
-        router.push('/rehabus/list'); // 更新成功後導向列表頁
-       // 發射編輯成功事件通知父元件
+        // 發射編輯成功事件通知父元件
         emit('edit-success');
 
-         // 發送全域事件，通知列表頁面刷新
-         window.dispatchEvent(new CustomEvent('bus-status-updated'));
-      
-         // 回到列表頁面
+        // 發送全域事件，通知列表頁面刷新
+        window.dispatchEvent(new CustomEvent('bus-status-updated'));
+
+        // 回到列表頁面
         router.push('/rehabus/list');
 
       } catch (err) {
         console.error('更新復康巴士失敗:', err);
         showToast({
-          title: '修改失敗 !',
-          message: err.message,
+          title: '更新失敗',
+          message: errorMessage,
           type: 'error'
         });
       }
     };
 
-     /**
-     * 獲取狀態對應的顯示文字
-     * @param {string} status - 巴士狀態
-     * @returns {string} 對應的顯示文字
-     */
+    /**
+    * 獲取狀態對應的顯示文字
+    * @param {string} status - 巴士狀態
+    * @returns {string} 對應的顯示文字
+    */
     const getStatusText = (status) => {
       switch (status) {
         case 'available':
@@ -358,23 +306,23 @@ export default {
     };
 
     // 1. 定義 getStatusClass
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'available':
-        return 'bg-success'
-      case 'dispatched':
-        return 'bg-warning'
-      case 'maintenance':
-        return 'bg-danger'
-      default:
-        return ''
+    const getStatusClass = (status) => {
+      switch (status) {
+        case 'available':
+          return 'bg-success'
+        case 'dispatched':
+          return 'bg-warning'
+        case 'maintenance':
+          return 'bg-danger'
+        default:
+          return ''
+      }
     }
-  }
-  
-  // 2. 組件掛載時載入資料
-  onMounted(() => {
-    fetchBusData()
-  })
+
+    // 2. 組件掛載時載入資料
+    onMounted(() => {
+      fetchBusData()
+    })
 
 
 
@@ -416,7 +364,7 @@ export default {
   overflow: hidden;
 }
 
-.avatar-preview > div {
+.avatar-preview>div {
   width: 100%;
   height: 100%;
   border-radius: 100%;
@@ -426,8 +374,9 @@ export default {
 }
 
 /* 巴士圖片預覽調整樣式 - 可能需要根據實際巴士圖片調整 */
-.avatar-preview > div {
-  border-radius: 8px; /* 改為方形或圓角方形更適合巴士圖片 */
+.avatar-preview>div {
+  border-radius: 8px;
+  /* 改為方形或圓角方形更適合巴士圖片 */
 }
 
 /* 狀態標記樣式 */
@@ -454,8 +403,7 @@ export default {
 
 /* 下拉選單樣式調整，適應狀態圖示 */
 select.form-select {
-  padding-right: 100px; /* 留出足夠空間顯示狀態圖示 */
+  padding-right: 100px;
+  /* 留出足夠空間顯示狀態圖示 */
 }
-
-
 </style>

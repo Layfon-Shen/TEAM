@@ -42,7 +42,6 @@
 
           <!-- 成功訊息顯示 -->
           <div v-if="successMessage" class="alert alert-success mb-16" role="alert">
-            <iconify-icon icon="solar:check-circle-outline" class="me-2"></iconify-icon>
             {{ successMessage }}
           </div>
 
@@ -97,7 +96,6 @@
 
           <!-- 顯示發送驗證碼的電子郵件 -->
           <div class="alert alert-info mb-16" role="alert">
-            <iconify-icon icon="solar:info-circle-outline" class="me-2"></iconify-icon>
             驗證碼已發送至：<strong>{{ emailForm.email }}</strong>
           </div>
 

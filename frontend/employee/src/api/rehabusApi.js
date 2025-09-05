@@ -1,174 +1,56 @@
-// 設定基礎 URL
-const BASE_URL = 'http://localhost:8080';
+import axiosInstance from './axiosInstance'; // 引入 axios 實例
 
 /**
- * 基礎 HTTP 請求功能
+ * 復康巴士 API 模組 - 使用 axios 處理 HTTP 請求和回應
+ * 根據 BusController.java 中的端點實作對應的方法
  */
-const httpClient = {
+export const busApi = {
   /**
-   * 發送 GET 請求
-   * @param {string} endpoint - API 端點
-   * @param {Object} params - URL 參數
-   * @returns {Promise} 回應的 Promise 物件
+   * 取得所有復康巴士列表
+   * @returns {Promise} 包含所有復康巴士資料的 Promise 物件
    */
-  async get(endpoint, params = {}) {
-    // 建構查詢參數
-    const queryParams = new URLSearchParams();
-    for (const key in params) {
-      if (params[key] !== null && params[key] !== undefined) {
-        queryParams.append(key, params[key]);
-      }
-    }
-
-    const queryString = queryParams.toString();
-    const url = `${BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`;
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP 錯誤 ${response.status}`);
-    }
-
-    const data = await response.json();
-    return { status: response.status, data };
+  getAllBuses() {
+    return axiosInstance.get('/rehabus/findAll');
   },
 
   /**
-  * 發送 POST 請求
-  * @param {string} endpoint - API 端點
-  * @param {Object} body - 請求主體
-  * @param {Object} params - URL 參數
-  * @returns {Promise} 回應的 Promise 物件
-  */
-  async post(endpoint, body = null, params = {}) {
-    // 建構查詢參數
-    const queryParams = new URLSearchParams();
-    for (const key in params) {
-      if (params[key] !== null && params[key] !== undefined) {
-        queryParams.append(key, params[key]);
-      }
-    }
-
-    const queryString = queryParams.toString();
-    const url = `${BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: body ? JSON.stringify(body) : null
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP 錯誤 ${response.status}`);
-    }
-
-    const data = await response.json();
-    return { status: response.status, data };
-  },
-
-  
-  /**
-   * 發送 PUT 請求
-   * @param {string} endpoint - API 端點
-   * @param {Object} body - 請求主體
-   * @returns {Promise} 回應的 Promise 物件
+   * 根據 ID 取得單一復康巴士
+   * @param {number} busId - 復康巴士 ID
+   * @returns {Promise} 包含復康巴士資料的 Promise 物件
    */
-  async put(endpoint, body) {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP 錯誤 ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return { status: response.status, data };
+  getBusById(busId) {
+    return axiosInstance.get(`/rehabus/${busId}`);
   },
-
-   /**
-   * 發送 DELETE 請求
-   * @param {string} endpoint - API 端點
-   * @returns {Promise} 回應的 Promise 物件
-   */
-  async delete(endpoint) {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    return { status: response.status };
-  }
-};
-
 
   /**
-   * 復康巴士 API 模組 - 只負責處理 HTTP 請求和回應
-   * 根據 BusController.java 中的端點實作對應的方法
+   * 搜尋復康巴士
+   * @param {Object} params - 搜尋參數
+   * @returns {Promise} 包含搜尋結果的 Promise 物件
    */
-  export const busApi = {
-    /**
-     * 取得所有復康巴士列表
-     * @returns {Promise} 包含所有復康巴士資料的 Promise 物件
-     */
-    getAllBuses() {
-    return httpClient.get('/rehabus/findAll');
+  searchBuses(params) {
+    // 構建查詢參數
+    const queryParams = {};
+
+    if (params.minSeats !== null && params.minSeats !== undefined) {
+      queryParams.minSeats = params.minSeats;
+    }
+
+    if (params.minWheels !== null && params.minWheels !== undefined) {
+      queryParams.minWheels = params.minWheels;
+    }
+
+    return axiosInstance.get('/rehabus/search', { params: queryParams });
   },
 
-    /**
-     * 根據 ID 取得單一復康巴士
-     * @param {number} busId - 復康巴士 ID
-     * @returns {Promise} 包含復康巴士資料的 Promise 物件
-     */
-     getBusById(busId) {
-    return httpClient.get(`/rehabus/${busId}`);
-  },
-
-
-/**
- * 搜尋復康巴士
- * @param {Object} params - 搜尋參數
- * @returns {Promise} 包含搜尋結果的 Promise 物件
- */
-searchBuses(params) {
-  // 構建查詢參數
-  const queryParams = {};
-  
-  if (params.minSeats !== null && params.minSeats !== undefined) {
-    queryParams.minSeats = params.minSeats;
-  }
-  
-  if (params.minWheels !== null && params.minWheels !== undefined) {
-    queryParams.minWheels = params.minWheels;
-  }
-  
-  return httpClient.get('/rehabus/search', queryParams);
-},
-
-    /**
+  /**
    * 新增復康巴士
    * @param {Object} busRequest - 復康巴士資料
    * @returns {Promise} 包含新增後復康巴士資料的 Promise 物件
    */
   addBus(busRequest) {
-    return httpClient.post('/rehabus', busRequest);
+    return axiosInstance.post('/rehabus', busRequest);
   },
 
-
-    
   /**
    * 更新復康巴士資料
    * @param {number} busId - 復康巴士 ID
@@ -176,7 +58,24 @@ searchBuses(params) {
    * @returns {Promise} 包含更新後復康巴士資料的 Promise 物件
    */
   updateBus(busId, busRequest) {
-    return httpClient.put(`/rehabus/update/${busId}`, busRequest);
+    if (!busId) throw new Error('復康巴士 ID 不能為空');
+    if (!busRequest) throw new Error('復康巴士更新資料不能為空');
+
+    // 確保資料符合後端API格式要求
+    const payload = {
+      carDealership: busRequest.carDealership,
+      busBrand: busRequest.busBrand,
+      busModel: busRequest.busModel,
+      seatCapacity: parseInt(busRequest.seatCapacity) || 0,
+      wheelchairCapacity: parseInt(busRequest.wheelchairCapacity) || 0,
+      licensePlate: busRequest.licensePlate,
+      status: busRequest.status || 'available'
+    };
+
+    console.log('API 層 - 準備更新復康巴士資料:', busId, payload);
+
+    // 使用 axiosInstance.put 方法發送請求 
+    return axiosInstance.put(`/rehabus/update/${busId}`, payload);
   },
 
   /**
@@ -185,16 +84,17 @@ searchBuses(params) {
    * @returns {Promise} 包含刪除結果的 Promise 物件
    */
   deleteBus(busId) {
-    return httpClient.delete(`/rehabus/delete/${busId}`);
+    return axiosInstance.delete(`/rehabus/delete/${busId}`);
   },
 
-
-    /**
+  /**
    * 從 CSV 檔案匯入復康巴士資料
    * @param {string} filePath - CSV 檔案路徑
    * @returns {Promise} 包含匯入筆數的 Promise 物件
    */
   importFromCsv(filePath) {
-    return httpClient.post('/rehabus/importcsv', null, { filePath });
+    return axiosInstance.post('/rehabus/importcsv', null, { 
+      params: { filePath } 
+    });
   }
 };

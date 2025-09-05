@@ -3,6 +3,7 @@ package com.ryanshiun.seniorscare.device.controller;
 import com.ryanshiun.seniorscare.device.model.Address;
 import com.ryanshiun.seniorscare.device.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,10 +37,17 @@ public class AddressController {
     }
 
 
-     //查詢指定會員的所有收件地址
-    @GetMapping("/member/{memberId}")
-    public List<Address> getAddressesByMemberId(@PathVariable Integer memberId) {
-        return addressService.getAddressesByMemberId(memberId);
+     //查詢指定會員的所有收件地址 (會員用)
+    @GetMapping("/member")
+    public List<Address> getAddressesByMemberId(Authentication authentication) {
+        Integer mid = Integer.parseInt(authentication.getName());
+        return addressService.getAddressesByMemberId(mid);
+    }
+
+    //查詢指定會員的所有收件地址 (員工用)
+    @GetMapping("/employee/{mid}")
+    public List<Address> getByMemberId(@PathVariable("mid") Integer mid) {
+        return addressService.getAddressesByMemberId(mid);
     }
 
      //設定會員的預設收件地址

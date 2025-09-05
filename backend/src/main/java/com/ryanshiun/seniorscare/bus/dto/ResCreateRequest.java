@@ -20,8 +20,6 @@ import lombok.Data;
 @Data
 public class ResCreateRequest {
 
-	@NotNull(message = "請提供會員編號")
-	@Positive
 	private int memberId;
 
 	@NotNull(message = "請提供巴士編號")
@@ -35,7 +33,7 @@ public class ResCreateRequest {
 	private int endZone;
 
 	@NotNull(message = "請提供要預約的時間")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd['T'][' ']HH:mm")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd['T'][' ']HH:mm[:ss]")
 	private LocalDateTime scheduledAt;
 
 	private String note;

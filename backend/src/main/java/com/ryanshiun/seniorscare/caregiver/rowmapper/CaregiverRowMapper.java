@@ -28,7 +28,7 @@ public class CaregiverRowMapper implements RowMapper<Caregiver> {
         caregiver.setTotalRatings(rs.getInt("total_ratings"));
         caregiver.setTotalPoints(rs.getInt("total_points"));
         caregiver.setIsActive(rs.getBoolean("is_active"));
-
+        caregiver.setSelfIntroduction(rs.getString("self_introduction"));
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
             caregiver.setCreatedAt(createdAt.toLocalDateTime());

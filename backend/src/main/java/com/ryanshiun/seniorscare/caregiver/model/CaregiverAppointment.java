@@ -11,31 +11,28 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CaregiverAppointment {
-    private Integer id;
-    private Integer memberId;
-    private Integer caregiverId;
-    private LocalDateTime scheduledAt;
-    private LocalDateTime endTime;
-    private String status;
-    private Boolean isBlocked; //虛擬訂單
-    private Integer serviceTypeId;
-    private String serviceLocation;
-    private BigDecimal totalAmount;
-    private String notes;
-    private String blockType;
+  // 基本資訊 - 完全對應資料庫欄位
+  private Integer id;                    // id
+  private Integer memberId;              // member_id
+  private Integer caregiverId;           // caregiver_id
+  private LocalDateTime scheduledAt;     // scheduled_at
+  private LocalDateTime endTime;         // end_time
+  private String status;                 // status
+  private Boolean isBlocked;             // is_blocked
+  private Integer serviceTypeId;         // service_type_id
+  private String serviceLocation;        // service_location
+  private BigDecimal totalAmount;        // total_amount
+  private String notes;                  // notes
+  private String blockType;              // block_type
 
-    // 建立者資訊
-    private String createdByType;
-    private Integer createdByMemberId;
-    private Integer createdByEmployeeId;
+  // 評分相關欄位
+  private Integer ratingScore;           // rating_score
+  private String ratingComment;          // rating_comment
+  private LocalDateTime ratedAt;         // rated_at
+  private Boolean isRated;               // is_rated
 
-    // 評分資訊
-    private Integer ratingScore;
-    private String ratingComment;
-    private LocalDateTime ratedAt;
-    private Boolean isRated;
-    private LocalDateTime createdAt;
-    private LocalDateTime cancelledAt;
+  // 系統時間戳記
+  private LocalDateTime createdAt;       // created_at
+  private LocalDateTime cancelledAt;     // cancelled_at
+
 }
-
-

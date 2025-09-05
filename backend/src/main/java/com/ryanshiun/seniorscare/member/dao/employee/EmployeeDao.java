@@ -41,7 +41,6 @@ public interface EmployeeDao {
     void deleteEmployeeRoles(int empId);
 
     // 新增員工權限
-
     void addEmployeeRole(int empId, List<Integer> newRoleIds);
 
     // 查詢員工資料 (登入用)

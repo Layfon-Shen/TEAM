@@ -36,6 +36,7 @@ out/
 .classpath
 .project
 .settings/
+.factorypath
 bin/
 
 # =====================================
@@ -47,8 +48,6 @@ mvnw.cmd
 target/
 logs/
 *.log
-# 忽略 Spring Boot 設定檔
-application.properties
 
 # =====================================
 # Git 相關

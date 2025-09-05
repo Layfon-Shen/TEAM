@@ -1,14 +1,11 @@
 <template>
   <div class="dashboard-main-body">
-    <Breadcrumb title="編輯復康巴士" :breadcrumbs="[
-      { name: '復康巴士列表', path: '/rehabus/list' },
-      { name: '編輯復康巴士' }
-    ]" />
-
-    
 
     <!-- 此處放入編輯復康巴士的表單 -->
     <div class="card">
+      <div class="card-header">
+        <h5>編輯復康巴士資料</h5>
+      </div>
       <div class="card-body">
         <!-- 表單內容將在後續實作 -->
     

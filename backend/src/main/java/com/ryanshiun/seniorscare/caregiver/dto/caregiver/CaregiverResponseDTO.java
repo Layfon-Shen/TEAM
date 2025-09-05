@@ -26,7 +26,7 @@ public class CaregiverResponseDTO {
     private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    private String selfIntroduction;
     // 性別顯示方法
     public String getGenderDisplay() {
         return gender != null ? (gender ? "男性" : "女性") : "未設定";

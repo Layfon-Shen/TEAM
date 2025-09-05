@@ -10,14 +10,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CaregiverAppointmentQueryDto {
-    private Integer memberId;
-    private Integer caregiverId;
-    private String status;
-    private Boolean isBlocked;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private String createdByType;
-    private Boolean isRated;
-    private Integer limit = 20;
-    private Integer offset = 0;
+  private Integer memberId;
+  private Integer caregiverId;
+  private String status;
+  private Boolean isBlocked;
+  private LocalDateTime startDate;
+  private LocalDateTime endDate;
+  private Boolean isRated;
+  private Integer limit = 20;
+  private Integer offset = 0;
 }

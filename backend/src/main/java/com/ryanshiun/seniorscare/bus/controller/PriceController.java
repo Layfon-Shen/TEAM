@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 
 @Validated
 @RestController
-@RequestMapping("/fareprice")
+@RequestMapping("/api/fareprice")
 public class PriceController {
 
 	@Autowired

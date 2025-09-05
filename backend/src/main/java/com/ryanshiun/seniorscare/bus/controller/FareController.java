@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Validated
 @RestController
-@RequestMapping("/fare")
+@RequestMapping("/api/fare")
 @RequiredArgsConstructor
 @CrossOrigin(originPatterns = "http://localhost:517*", methods = { RequestMethod.GET, RequestMethod.POST,
 		RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS,

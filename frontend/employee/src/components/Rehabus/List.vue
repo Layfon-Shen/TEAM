@@ -1,6 +1,8 @@
 <template>
   <div class="card border-0 shadow-sm">
+    <!-- ...現有的模板內容保持不變... -->
     <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+    
       <div class="d-flex align-items-center">
         <!-- 座位數量搜尋欄位 - -->
          <div class="d-flex me-3 gap-2">
@@ -136,7 +138,8 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { rehabusService } from '@/services/rehabusService';
-import { useToast } from '@/composables/useToast'; // 引入 toast 元件
+import { useToast } from '@/composables/useToast';
+import { useConfirmDialog } from '@/composables/useConfirmDialog';
 
 export default {
   name: 'BusList',
@@ -146,6 +149,8 @@ export default {
     const loading = ref(true);
     const error = ref(null);
     const router = useRouter();
+    const { showToast } = useToast();
+    const { showConfirmDialog } = useConfirmDialog(); // **重點：引入確認對話框**
 
     // 分頁相關
     const currentPage = ref(1);
@@ -159,9 +164,6 @@ export default {
 
     // 強制刷新控制
     const refreshTrigger = ref(0);
-
-    // 使用 Toast 通知功能
-    const { showToast } = useToast(); 
 
     // 計算總頁數
     const totalPages = computed(() => {
@@ -222,12 +224,20 @@ export default {
     const handleSearch = () => {
       // 驗證輸入的是否為有效數值
       if (minSeats.value && isNaN(parseInt(minSeats.value))) {
-        alert('一般座位數必須是數字');
+        showToast({
+          title: '搜尋錯誤',
+          message: '一般座位數必須是數字',
+          type: 'error'
+        });
         return;
       }
       
       if (minWheels.value && isNaN(parseInt(minWheels.value))) {
-        alert('輪椅座位數必須是數字');
+        showToast({
+          title: '搜尋錯誤',
+          message: '輪椅座位數必須是數字',
+          type: 'error'
+        });
         return;
       }
       
@@ -241,42 +251,62 @@ export default {
       refreshTrigger.value++; // 觸發重新載入
       loadBuses();
     };
-  
+
     // 處理編輯
     const handleEdit = (busId) => {
       // 導航到編輯頁面
       router.push(`/rehabus/edit/${busId}`);
     };
 
-    // 刪除巴士
+    // **重點：使用 useConfirmDialog 處理刪除確認**
     const handleDelete = async (busId) => {
-      if (confirm('確定要刪除此復康巴士記錄嗎？')) {
-        try {
-          // 呼叫服務層刪除巴士資料
-          const isDeleted = await rehabusService.deleteBus(busId);
+      try {
+        // 取得要刪除的巴士資訊用於顯示詳細訊息
+        const busToDelete = busList.value.find(bus => bus.id === busId);
+        const busInfo = busToDelete ? `${busToDelete.carDealership} ${busToDelete.busBrand} (${busToDelete.licensePlate})` : `ID: ${busId}`;
 
-          if (isDeleted) {
-            // 顯示操作成功通知
-            showToast({
-              title: '成功刪除巴士',
-              message: `巴士 ID: ${busId} 已刪除`,
-              type: 'success'
-            });
+        // **重點：使用 showConfirmDialog 顯示確認對話框**
+        const confirmed = await showConfirmDialog({
+          title: '確認刪除復康巴士',
+          message: `您確定要刪除以下復康巴士嗎？\n\n${busInfo}\n\n此操作無法復原。`,
+          type: 'error', // **重點：使用 error 類型以突出危險性**
+          confirmText: '確認刪除',
+          cancelText: '取消',
+          confirmButtonClass: 'btn-danger',
+          icon: 'heroicons:trash'
+        });
+        
 
-            // 刪除成功後重新載入資料
-            loadBuses();
-          } else {
-            throw new Error('刪除失敗，伺服器未回應成功');
+        // **重點：只有在使用者確認後才執行刪除**
+        if (confirmed) {
+          // 顯示載入狀態
+          const busIndex = busList.value.findIndex(bus => bus.id === busId);
+          if (busIndex !== -1) {
+            // 可以在這裡添加載入狀態指示
           }
-        } catch (err) {
-          // 顯示錯誤通知
+
+          // **重點：執行實際的刪除操作**
+          await rehabusService.deleteBus(busId);
+          
+          // **重點：刪除成功後顯示成功訊息**
           showToast({
-            title: '刪除失敗 !',
-            message: err.message,
-            type: 'error'
+            title: '刪除成功',
+            message: `復康巴士 ${busInfo} 已成功刪除`,
+            type: 'success'
           });
-          console.error('刪除復康巴士失敗:', err);
+
+          // **重點：重新載入資料以更新列表**
+          await loadBuses();
         }
+      } catch (err) {
+        console.error('刪除復康巴士失敗:', err);
+        
+        // **重點：顯示錯誤訊息**
+        showToast({
+          title: '刪除失敗',
+          message: err.message || '刪除復康巴士時發生未知錯誤，請稍後再試',
+          type: 'error'
+        });
       }
     };
 
@@ -321,13 +351,11 @@ export default {
       }
     });
 
-
     // 頁面載入時獲取資料
     onMounted(() => {
       loadBuses();
-   
 
-    // 添加全域事件監聽器，用於其他頁面通知列表刷新
+      // 添加全域事件監聽器，用於其他頁面通知列表刷新
       window.addEventListener('bus-status-updated', () => {
         loadBuses();
       });

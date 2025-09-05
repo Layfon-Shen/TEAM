@@ -1,9 +1,12 @@
 package com.ryanshiun.seniorscare.bus.controller;
 
+
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,17 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ryanshiun.seniorscare.bus.dto.ResCreateRequest;
 import com.ryanshiun.seniorscare.bus.dto.ResQueryParams;
 import com.ryanshiun.seniorscare.bus.dto.ResRequest;
-import com.ryanshiun.seniorscare.bus.model.Reservation;
+import com.ryanshiun.seniorscare.bus.model.BusReservation;
 import com.ryanshiun.seniorscare.bus.service.ResService;
 
 import jakarta.validation.Valid;
 
 @Validated
 @RestController
-@RequestMapping("/reservation")
-@CrossOrigin(originPatterns = "http://localhost:517*", methods = { RequestMethod.GET, RequestMethod.POST,
-		RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS,
-		RequestMethod.PATCH }, allowedHeaders = "*", allowCredentials = "true")
+@RequestMapping("/api/reservation")
 public class ResController {
 
 	@Autowired
@@ -39,19 +39,24 @@ public class ResController {
 
 	// 新增預約表單
 	@PostMapping
-	public ResponseEntity<Reservation> insertRes(@RequestBody @Valid ResCreateRequest resCreateRequest) {
-
+	public ResponseEntity<BusReservation> insertRes(
+			@RequestBody @Valid ResCreateRequest resCreateRequest,
+			Authentication authentication) {
+		int memberId = Integer.parseInt(authentication.getName());
+		System.out.println("當前登入者 ID: " + memberId);
+		resCreateRequest.setMemberId(memberId);
 		// 取得新的id
 		int id = resService.insertRes(resCreateRequest);
 
 		// 拿到新的物件
-		Reservation reservation = resService.findById(id);
-		return ResponseEntity.ok(reservation);
+
+		BusReservation busReservation = resService.findById(id);
+		return ResponseEntity.ok(busReservation);
 	}
 
 	// 刪除預約表單
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Reservation> deleteRes(@PathVariable("id") int id) {
+	public ResponseEntity<BusReservation> deleteRes(@PathVariable("id") int id) {
 		Integer dRes = resService.deleteRes(id);
 		if (dRes == 0) {
 			return ResponseEntity.notFound().build();
@@ -63,11 +68,13 @@ public class ResController {
 
 	// 修改預約表單
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Reservation> updateRes(@PathVariable("id") int id,
+	public ResponseEntity<BusReservation> updateRes(@PathVariable("id") int id,
+
 			@RequestBody @Valid ResRequest resRequest) {
 
+
 		resRequest.setId(id);
-		Reservation uRes = resService.updateRes(resRequest);
+		BusReservation uRes = resService.updateRes(resRequest);
 
 		if (uRes == null) {
 			return ResponseEntity.notFound().build();
@@ -78,15 +85,15 @@ public class ResController {
 
 	// 查詢所有預約表單
 	@GetMapping("/findAll")
-	public ResponseEntity<List<Reservation>> listAll() {
-		List<Reservation> list = resService.findAllRes();
+	public ResponseEntity<List<BusReservation>> listAll() {
+		List<BusReservation> list = resService.findAllRes();
 		return ResponseEntity.ok(list);
 	}
 
 	// 查詢預約表單(根據ID)
 	@GetMapping("/{id}")
-	public ResponseEntity<Reservation> getById(@PathVariable("id") int id) {
-		Reservation fRes = resService.findById(id);
+	public ResponseEntity<BusReservation> getById(@PathVariable("id") int id) {
+		BusReservation fRes = resService.findById(id);
 		if (fRes == null) {
 			return ResponseEntity.notFound().build();
 		} else {
@@ -97,9 +104,9 @@ public class ResController {
 
 	// 查詢預約表單(根據指定地點、預約時間、會員ID)
 	@GetMapping("/search")
-	public ResponseEntity<List<Reservation>> findByFilter(@ModelAttribute ResQueryParams resQueryParams) {
+	public ResponseEntity<List<BusReservation>> findByFilter(@ModelAttribute ResQueryParams resQueryParams) {
 
-		List<Reservation> list = resService.findByFilter(resQueryParams);
+		List<BusReservation> list = resService.findByFilter(resQueryParams);
 		if (list.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		} else {
@@ -109,10 +116,15 @@ public class ResController {
 
 	// 已完乘，自動放入時間
 	@PatchMapping("/{id}/complete")
-	public ResponseEntity<Void> markCompleted(@PathVariable("id") int id) {
-		resService.markCompleted(id);
+	public ResponseEntity<Map<String, Object>> complete(@PathVariable int id) {
 
-		return ResponseEntity.noContent().build();
+		Map<String, Object> view = resService.markCompleted(id);
+		return ResponseEntity.ok(view);
+	}
+
+	@GetMapping("/view/{id}")
+	public ResponseEntity<Map<String, Object>> view(@PathVariable("id") int id) {
+		return ResponseEntity.ok(resService.findViewById(id));
 
 	}
 

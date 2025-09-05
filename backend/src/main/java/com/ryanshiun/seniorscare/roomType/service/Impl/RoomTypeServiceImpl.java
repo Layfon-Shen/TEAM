@@ -18,6 +18,10 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     private final RoomTypeDao dao;
 
+    // 統一圖片目錄與公開路徑（與前端一致）
+    private static final File FS_UPLOAD_DIR = new File("uploads/images/RoomImg").getAbsoluteFile();
+    private static final String PUBLIC_IMG_PREFIX = "images/RoomImg/"; // 存 DB 的相對路徑
+
     public RoomTypeServiceImpl(RoomTypeDao dao) {
         this.dao = dao;
     }
@@ -25,7 +29,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     // ====== C ======
     @Override
     public Integer addRoomType(RoomType room) {
-        return dao.insert(room); // 對齊你的 DAO
+        return dao.insert(room);
     }
 
     /** 新增：用表單建（不含圖片處理） */
@@ -115,8 +119,9 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         return dao.countAll();
     }
 
-    // ====== CSV (path) ======
+    // ====== CSV Import (path) ======
     @Override
+    @Transactional
     public void importRoomTypesFromCSV(String csvPath) {
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(csvPath), StandardCharsets.UTF_8))) {
@@ -126,32 +131,29 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         }
     }
 
-    // ====== CSV Export (writer) ======
+    // ====== CSV Export（與匯入順序一致，7 欄，snake_case）======
     @Override
     @Transactional(readOnly = true)
     public void exportToCSV(PrintWriter writer) {
-        // 保持你原先欄位順序（若無 special_features，該欄位會輸出空字串）
-        writer.println("id,name,price,capacity,description,special_features,imagePath,isAvailable,adminNote,createdAt,updatedAt");
+        writer.println("name,price,capacity,description,image_path,is_available,admin_note");
         for (RoomType r : dao.findAll()) {
             writer.println(String.join(",",
-                    csv(r.getId()),
                     csv(r.getName()),
                     csv(r.getPrice()),
                     csv(r.getCapacity()),
                     csv(r.getDescription()),
-                    csv(""), // special_features 若無欄位，填空
                     csv(r.getImagePath()),
-                    csv(r.isAvailable()),
-                    csv(r.getAdminNote()),
-                    csv(r.getCreatedAt()),
-                    csv(r.getUpdatedAt())
+                    // SQL Server BIT 最穩用 1/0
+                    csv(r.isAvailable() ? 1 : 0),
+                    csv(r.getAdminNote())
             ));
         }
         writer.flush();
     }
 
-    // ====== CSV (multipart) ======
+    // ====== CSV Import (multipart) ======
     @Override
+    @Transactional
     public void importFromCSV(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
         try (BufferedReader br = new BufferedReader(
@@ -185,7 +187,17 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         return dao.update(room);
     }
 
-    // ====== Partial Update (Form) ======
+    private int getInt(Map<String, Object> updates, String string) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private boolean getBoolAny(Map<String, Object> updates, String string, String string2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	// ====== Partial Update (Form) ======
     @Override
     public boolean partialUpdate(int id, RoomTypeForm form) {
         RoomType room = dao.findById(id);
@@ -207,41 +219,36 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     // ====== Image helpers ======
 
-    /** Controller 不動；這裡決定 imagePath 來源：優先檔案，其次字串路徑 */
+    /** 決定 imagePath 來源：優先檔案，其次字串路徑（與前端一致的公開路徑） */
     private String resolveImagePathFromForm(RoomTypeForm form) {
         MultipartFile file = form.getImage();
         if (file != null && !file.isEmpty()) {
-            try { 
-                return saveImage(file);       // 回傳 /images/{filename}
-            } catch (IOException e) { 
-                throw new RuntimeException("Save image failed: " + e.getMessage(), e); 
+            try {
+                return saveImage(file); // 回傳 images/RoomImg/{filename}
+            } catch (IOException e) {
+                throw new RuntimeException("Save image failed: " + e.getMessage(), e);
             }
         }
         if (form.getImagePath() != null && !form.getImagePath().isBlank()) {
-            return form.getImagePath().trim(); // 支援外部或既有路徑
+            return form.getImagePath().trim();
         }
         return null;
     }
 
-    /** 以原檔名儲存到 uploads/images；對外路徑回傳 /images/{filename} */
+    /** 寫入 uploads/images/RoomImg；DB 存 images/RoomImg/{filename} */
     private String saveImage(MultipartFile file) throws IOException {
-        // 確保目錄存在
-        File dir = new File("uploads/images/roomImg").getAbsoluteFile();
-        if (!dir.exists()) Files.createDirectories(dir.toPath());
+        if (!FS_UPLOAD_DIR.exists()) Files.createDirectories(FS_UPLOAD_DIR.toPath());
 
-        // 取原檔名（去除任何路徑）
         String original = Optional.ofNullable(file.getOriginalFilename()).orElse("upload");
         original = java.nio.file.Paths.get(original).getFileName().toString();
 
-        // 拆副檔名
         String ext = "";
         int dot = original.lastIndexOf('.');
         if (dot >= 0 && dot < original.length() - 1) {
             ext = original.substring(dot).toLowerCase(); // .png
-            original = original.substring(0, dot);       // 照片 (2)
+            original = original.substring(0, dot);
         }
 
-        // 淨化基本檔名：空白→_；只留中英數._-；非法字元→_
         String base = original
                 .replaceAll("[\\s]+", "_")
                 .replaceAll("[^0-9A-Za-z\\u4e00-\\u9fa5._-]", "_")
@@ -249,91 +256,98 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         if (base.isBlank()) base = "file";
         if (base.length() > 200) base = base.substring(0, 200);
 
-        // 防同名覆蓋：同名加 -1, -2...
+        // 防同名覆蓋
         String filename = base + ext;
-        File dest = new File(dir, filename);
+        File dest = new File(FS_UPLOAD_DIR, filename);
         int i = 1;
         while (dest.exists()) {
             filename = base + "-" + i + ext;
-            dest = new File(dir, filename);
+            dest = new File(FS_UPLOAD_DIR, filename);
             i++;
         }
 
-        // 寫檔
         file.transferTo(dest);
-
-        // 回傳可被 /images/** 提供的 URL
-        return "images/roomImg/" + filename;
+        return PUBLIC_IMG_PREFIX + filename; // e.g. images/RoomImg/room1.png
     }
 
-    // ====== CSV helpers ======
+    // ====== CSV helpers（重點：支援 header 對映 + 無 header 回退順序）======
+
     private void importCsvBuffered(BufferedReader br) throws IOException {
-        String header = br.readLine();
-        if (header == null) return;
+        // 讀第一行（可能是 header，也可能是資料列或空行）
+        String firstLine = readNextNonEmptyLine(br);
+        if (firstLine == null) return;
+
+        firstLine = stripBOM(firstLine);
+        String[] firstCols = splitCsv(firstLine);
+
+        boolean hasHeader = looksLikeHeader(firstCols);
+
+        Map<String, Integer> idx = new HashMap<>();
+        if (hasHeader) {
+            for (int i = 0; i < firstCols.length; i++) {
+                idx.put(norm(stripBOM(firstCols[i])), i);
+            }
+        } else {
+            // 沒有 header 的話，firstLine 也是資料列，要先處理它
+            processDataRow(firstCols, false, idx);
+        }
 
         String line;
         while ((line = br.readLine()) != null) {
+            line = stripBOM(line);
+            if (line == null || line.isBlank()) continue; // 跳過空行
             String[] cols = splitCsv(line);
-            if (cols.length < 7) continue;
+            if (cols.length == 0) continue;               // 跳過空欄
+            processDataRow(cols, hasHeader, idx);
+        }
+    }
 
-            RoomType r = new RoomType();
+    private void processDataRow(String[] cols, boolean hasHeader, Map<String, Integer> idx) {
+        RoomType r = new RoomType();
+
+        if (hasHeader) {
+            // 欄名導向（大小寫不敏感，容錯常見別名）
+            r.setName(getStr(cols, idx, "name"));
+            r.setPrice(parseIntSafe(getStr(cols, idx, "price")));
+            r.setCapacity(parseIntSafe(getStr(cols, idx, "capacity")));
+            r.setDescription(getStr(cols, idx, "description"));
+
+            String img = getStr(cols, idx, "image_path", "imagepath", "image_url", "imageurl");
+            r.setImagePath(img);
+
+            Boolean avail = parseBoolObj(getStr(cols, idx, "is_available", "available", "isavailable"));
+            r.setAvailable(avail != null ? avail : true);
+
+            r.setAdminNote(getStr(cols, idx, "admin_note", "adminnote", "note"));
+        } else {
+            // 無 header：固定順序 name, price, capacity, description, image_path, is_available, admin_note
             int i = 0;
-            r.setId(parseIntSafe(cols[i++]));           // id
-            r.setName(ns(cols[i++]));                   // name
-            r.setPrice(parseIntSafe(cols[i++]));        // price
-            r.setCapacity(parseIntSafe(cols[i++]));     // capacity
-            r.setDescription(ns(cols[i++]));            // description
-            r.setImagePath(ns(cols[i++]));              // imagePath
-            r.setAvailable(cols.length > i ? parseBoolSafe(cols[i++]) : true); // isAvailable
-            r.setAdminNote(cols.length > i ? ns(cols[i++]) : null);            // adminNote
-
-            if (r.getId() > 0) dao.update(r);
-            else dao.insert(r);
+            r.setName(ns(getByIdx(cols, i++)));
+            r.setPrice(parseIntSafe(getByIdx(cols, i++)));
+            r.setCapacity(parseIntSafe(getByIdx(cols, i++)));
+            r.setDescription(ns(getByIdx(cols, i++)));
+            r.setImagePath(ns(getByIdx(cols, i++)));
+            r.setAvailable(parseBoolSafe(getByIdx(cols, i++)));
+            r.setAdminNote(ns(getByIdx(cols, i++)));
         }
+
+        // 匯入策略：全 INSERT（最單純不干擾既有資料）
+        dao.insert(r);
     }
 
-    // tiny utils
-    private static String csv(Object v) {
-        String s = v == null ? "" : String.valueOf(v);
-        if (s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r")) {
-            s = s.replace("\"", "\"\"");
-            return "\"" + s + "\"";
+    // 讀下一行非空白（也會去掉 BOM）
+    private String readNextNonEmptyLine(BufferedReader br) throws IOException {
+        String s;
+        while ((s = br.readLine()) != null) {
+            s = stripBOM(s);
+            if (s != null && !s.isBlank()) return s;
         }
-        return s;
-    }
-    private static int parseIntSafe(String s) { try { return Integer.parseInt(s == null ? "0" : s.trim()); } catch (Exception e) { return 0; } }
-    private static boolean parseBoolSafe(String s) {
-        if (s == null) return false;
-        String t = s.trim().toLowerCase();
-        return "1".equals(t) || "true".equals(t) || "yes".equals(t);
-    }
-    private static String ns(String s) { return s == null ? "" : s; }
-
-    private static boolean has(Map<String, Object> map, String key) { return map.containsKey(key) && map.get(key) != null; }
-    private static boolean hasAny(Map<String, Object> map, String... keys) { for (String k : keys) if (has(map, k)) return true; return false; }
-    private static String getStr(Map<String, Object> map, String key) { Object v = map.get(key); return v == null ? null : String.valueOf(v); }
-    private static String getStrAny(Map<String, Object> map, String... keys) { for (String k : keys) if (has(map, k)) return getStr(map, k); return null; }
-    private static int getInt(Map<String, Object> map, String key) {
-        Object v = map.get(key);
-        if (v == null) return 0;
-        if (v instanceof Number) return ((Number) v).intValue();
-        String s = String.valueOf(v).trim();
-        return s.isEmpty() ? 0 : Integer.parseInt(s);
-    }
-    private static boolean getBoolAny(Map<String, Object> map, String... keys) {
-        for (String k : keys) if (has(map, k)) return getBool(map, k);
-        return false;
-    }
-    private static boolean getBool(Map<String, Object> map, String key) {
-        Object v = map.get(key);
-        if (v == null) return false;
-        if (v instanceof Boolean) return (Boolean) v;
-        String s = String.valueOf(v).trim().toLowerCase();
-        return "1".equals(s) || "true".equals(s) || "yes".equals(s);
+        return null;
     }
 
-    // very light CSV splitter
+    // 安全 CSV 分割：永不回傳 null（空行回傳空陣列）
     private static String[] splitCsv(String line) {
+        if (line == null) return new String[0];
         List<String> out = new ArrayList<>();
         StringBuilder cur = new StringBuilder();
         boolean inQuotes = false;
@@ -347,6 +361,97 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         }
         out.add(cur.toString());
         return out.toArray(new String[0]);
+    }
+
+    private static String getByIdx(String[] arr, int i) {
+        if (arr == null) return null; // 防 NPE
+        return (i >= 0 && i < arr.length) ? arr[i] : null;
+    }
+
+    private static String stripBOM(String s) {
+        if (s == null) return null;
+        return s.startsWith("\uFEFF") ? s.substring(1) : s;
+    }
+
+    private static boolean looksLikeHeader(String[] cols) {
+        if (cols == null || cols.length == 0) return false;
+        String c0 = norm(stripBOM(cols[0]));
+        if (c0.isEmpty()) return false;
+        // 只要第一欄像欄名（常見欄或含字母）就視為 header
+        return c0.equals("name") || c0.equals("price") || c0.equals("description") || c0.matches(".*[a-z].*");
+    }
+
+    private static String norm(String s) {
+        if (s == null) return "";
+        return s.trim().toLowerCase().replaceAll("[^a-z0-9_]", "");
+    }
+
+    private static String csv(Object v) {
+        String s = v == null ? "" : String.valueOf(v);
+        if (s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r")) {
+            s = s.replace("\"", "\"\"");
+            return "\"" + s + "\"";
+        }
+        return s;
+    }
+
+    private static int parseIntSafe(String s) {
+        try { return (s == null || s.isBlank()) ? 0 : Integer.parseInt(s.trim()); }
+        catch (Exception e) { return 0; }
+    }
+
+    private static boolean parseBoolSafe(String s) {
+        Boolean b = parseBoolObj(s);
+        return b != null && b;
+    }
+
+    private static Boolean parseBoolObj(String s) {
+        if (s == null) return null;
+        String t = s.trim().toLowerCase();
+        switch (t) {
+            case "1", "true", "yes", "y", "是": return true;
+            case "0", "false", "no", "n", "否": return false;
+            default: return null;
+        }
+    }
+
+    private static String ns(String s) { return (s == null) ? "" : s.trim(); }
+
+    private static boolean has(Map<String, Object> map, String key) { return map.containsKey(key) && map.get(key) != null; }
+    private static boolean hasAny(Map<String, Object> map, String... keys) { for (String k : keys) if (has(map, k)) return true; return false; }
+    private static String getStr(Map<String, Object> map, String key) { Object v = map.get(key); return v == null ? null : String.valueOf(v); }
+    private static String getStrAny(Map<String, Object> map, String... keys) { for (String k : keys) if (has(map, k)) return getStr(map, k); return null; }
+
+    private static String getStr(String[] cols, Map<String, Integer> idx, String... keys) {
+        for (String k : keys) {
+            Integer i = idx.get(norm(k));
+            if (i != null && i >= 0 && i < cols.length) {
+                String val = cols[i];
+                return (val == null || val.isBlank()) ? null : val.trim();
+            }
+        }
+        return null;
+    }
+
+    // ====== Image APIs exposed to controller ======
+    @Override
+    public void updateImagePath(int id, String imagePath) {
+        if (imagePath == null) return;
+        RoomType room = dao.findById(id);
+        if (room == null) return;
+        room.setImagePath(imagePath.trim());
+        dao.update(room);
+    }
+
+    @Override
+    public void updateImage(int id, MultipartFile img) {
+        if (img == null || img.isEmpty()) return;
+        try {
+            String path = saveImage(img); // images/RoomImg/{filename}
+            updateImagePath(id, path);
+        } catch (IOException e) {
+            throw new RuntimeException("Save image failed: " + e.getMessage(), e);
+        }
     }
 
     // ====== Filtered Search ======
@@ -365,26 +470,5 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public int countFiltered(String keyword, Integer minPrice, Integer maxPrice, Integer capacity,
                              List<Integer> featureIds, boolean matchAll) {
         return dao.countFiltered(keyword, minPrice, maxPrice, capacity, featureIds, matchAll);
-    }
-
-    // ====== Image APIs exposed to controller ======
-    @Override
-    public void updateImagePath(int id, String imagePath) {
-        if (imagePath == null) return;
-        RoomType room = dao.findById(id);
-        if (room == null) return;
-        room.setImagePath(imagePath);
-        dao.update(room);
-    }
-
-    @Override
-    public void updateImage(int id, MultipartFile img) {
-        if (img == null || img.isEmpty()) return;
-        try {
-            String path = saveImage(img); // /images/{filename}
-            updateImagePath(id, path);
-        } catch (IOException e) {
-            throw new RuntimeException("Save image failed: " + e.getMessage(), e);
-        }
     }
 }

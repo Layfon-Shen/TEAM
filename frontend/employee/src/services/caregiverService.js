@@ -53,6 +53,14 @@ export const caregiverService = {
     try {
       const response = await caregiverApi.getCaregiverById(id);
       
+      console.log('===== 後端原始回應調試 =====');
+      console.log('完整回應:', response.data);
+      console.log('照服員原始資料:', response.data.data);
+      console.log('自我介紹欄位 (原始):', response.data.data?.selfIntroduction);
+      console.log('自我介紹欄位 (snake_case):', response.data.data?.self_introduction);
+      console.log('所有欄位:', Object.keys(response.data.data || {}));
+      console.log('=============================');
+      
       if (response.status === 200 && response.data.success) {
         return this.transformCaregiverData(response.data.data);
       }
@@ -74,6 +82,15 @@ export const caregiverService = {
       // 轉換前端資料格式為後端所需格式
       const requestDto = this.transformToRequestDto(caregiverData);
       
+      console.log('===== 發送到後端的資料調試 =====');
+      console.log('RequestDTO:', requestDto);
+      console.log('欄位數量:', Object.keys(requestDto).length);
+      console.log('所有欄位:', Object.keys(requestDto));
+      Object.keys(requestDto).forEach((key, index) => {
+        console.log(`${index + 1}. ${key}: ${requestDto[key]} (${typeof requestDto[key]})`);
+      });
+      console.log('===============================');
+      
       const response = await caregiverApi.createCaregiver(requestDto);
       
       if (response.status === 201 && response.data.success) {
@@ -83,6 +100,9 @@ export const caregiverService = {
       throw new Error(response.data.message || '新增照服員失敗');
     } catch (error) {
       console.error('新增照服員錯誤:', error);
+      if (error.response?.data) {
+        console.error('錯誤回應資料:', error.response.data);
+      }
       throw error;
     }
   },
@@ -95,7 +115,23 @@ export const caregiverService = {
    */
   async updateCaregiver(id, caregiverData) {
     try {
-      const requestDto = this.transformToRequestDto(caregiverData);
+      // 首先獲取現有的照服員資料，保留評價資訊
+      const existingData = await this.getCaregiverById(id);
+      
+      // 合併現有資料和新資料，確保評價資訊不會遺失
+      const mergedData = {
+        ...existingData,
+        ...caregiverData,
+        // 明確保留評價相關欄位
+        averageRating: caregiverData.averageRating !== undefined ? 
+          caregiverData.averageRating : existingData.averageRating,
+        totalRatings: caregiverData.totalRatings !== undefined ? 
+          caregiverData.totalRatings : existingData.totalRatings,
+        totalPoints: caregiverData.totalPoints !== undefined ? 
+          caregiverData.totalPoints : existingData.totalPoints
+      };
+      
+      const requestDto = this.transformToRequestDto(mergedData);
       
       const response = await caregiverApi.updateCaregiver(id, requestDto);
       
@@ -185,6 +221,7 @@ async deleteCaregiver(id) {
       phone: caregiver.phone,
       email: caregiver.email,
       experienceYears: caregiver.experienceYears,
+      selfIntroduction: caregiver.selfIntroduction || '',  // 新增自我介紹欄位支援
       // 確保照片路徑正確儲存
       photo: caregiver.photo,
       address: caregiver.address,
@@ -208,19 +245,29 @@ async deleteCaregiver(id) {
    * @returns {Object} RequestDTO 格式的資料
    */
   transformToRequestDto(caregiverData) {
+    // 根據 API 文檔和錯誤訊息，確保包含所有必要欄位
+    const currentTime = new Date().toISOString();
+    
     return {
       chineseName: caregiverData.chineseName,
       gender: caregiverData.gender,
       phone: caregiverData.phone,
       email: caregiverData.email,
       experienceYears: parseInt(caregiverData.experienceYears) || 0,
+      selfIntroduction: caregiverData.selfIntroduction || null,
       photo: caregiverData.photo || null,
       address: caregiverData.address || null,
       serviceArea: caregiverData.serviceArea || null,
-      averageRating: caregiverData.averageRating || null,
-      totalRatings: caregiverData.totalRatings || null,
-      totalPoints: caregiverData.totalPoints || null,
-      isActive: caregiverData.isActive !== undefined ? caregiverData.isActive : true
+      // 保留原有的評價資訊，避免更新時被覆蓋
+      averageRating: caregiverData.averageRating !== undefined ? 
+        parseFloat(caregiverData.averageRating) : 0.00,
+      totalRatings: caregiverData.totalRatings !== undefined ? 
+        parseInt(caregiverData.totalRatings) : 0,
+      totalPoints: caregiverData.totalPoints !== undefined ? 
+        parseInt(caregiverData.totalPoints) : 0,
+      isActive: caregiverData.isActive !== undefined ? caregiverData.isActive : true,
+      createdAt: currentTime,
+      updatedAt: currentTime
     };
   }
 };

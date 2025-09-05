@@ -1,36 +1,36 @@
 package com.ryanshiun.seniorscare.member.dao.member;
 
-import com.ryanshiun.seniorscare.member.dto.member.MemberProfileDto;
+import com.ryanshiun.seniorscare.member.dto.member.*;
 import com.ryanshiun.seniorscare.member.model.member.Member;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MemberDao {
-    // 註冊前檢查手機是否存在
-    Boolean existsByMainPhone(String phone);
 
-    // 讀取會員資料 By mainPhone
-    Member findByMainPhone(String phone);
+    // 查詢會員資料 (前端用)
+    MemberProfileDto getMemberById(Integer memberId);
 
-    // 讀取會員資料 By memberId
-    Member findById(Integer id, boolean forUpdate);
+    // 查詢會員資料 (line登入用) - 透過 id
+    Member passMemberInfoByLineId(String lineUserId);
 
-    // 註冊會員資料
-    Integer register(Member member);
+    // 查詢 email 是否已經被註冊
+    Integer isEmailExists(String email);
 
-    // 登入成功更新 login
-    Integer updateLogin(Integer memberId, String loginTime);
+    // 客製化查詢會員
+    List<MemberProfileDto> getMembers(MemberQueryParamsDto memberQueryParams);
 
-    // 編輯個人資料
-    Integer updateProfile(Integer memberId, MemberProfileDto dto);
+    // 修改個人資料
+    void updateProfile(MemberUpdateDto memberUpdateDto);
 
-    // 開通第二支手機
-    Integer bindCaregiverPhone(Integer memberId, String caregiverPhone);
+    // 啟用 or 停權會員
+    void toggleMemberStatus(BanReasonDto banReasonDto);
 
-    // 移除代理人電話
-    Integer unbindCaregiverPhone(Integer memberId);
+    /* ------------------------- 登入相關 -------------------------- */
 
-    // 停權會員
-    Integer banMember(Integer memberId, String reason, LocalDateTime banAt);
+    // 更新登入時間
+    void updateLastLogin(String lineUserId);
+
+    // line登入 (首次登入)
+    Integer register(MemberRegisterDto memberRegisterDto);
+
 }

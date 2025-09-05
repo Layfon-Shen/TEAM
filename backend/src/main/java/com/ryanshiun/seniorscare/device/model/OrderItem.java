@@ -16,4 +16,5 @@ public class OrderItem {
     private Integer deviceId;   //商品（輔具）ID（對應 device 表的外鍵）
     private BigDecimal unitPrice;  //單價（訂購時的商品價格）
     private Integer quantity;  //購買數量
+    private String name;
 }

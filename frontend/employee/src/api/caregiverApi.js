@@ -1,9 +1,6 @@
 import axiosInstance from './axiosInstance';
 // import axios from 'axios';
 
-
-
-
 // // 設定 axios 實例的基礎 URL
 // const apiClient = axios.create({
 //   baseURL: 'http://localhost:8080/api', // 與員工 API 使用相同的基礎路徑
@@ -23,7 +20,7 @@ export const caregiverApi = {
    */
   getAllCaregivers() {
     // 直接返回 axios 請求結果，由上層處理成功/錯誤情況
-    return axiosInstance.get('/caregivers');
+    return axiosInstance.get('/caregiver');
   },
 
   /**
@@ -32,7 +29,7 @@ export const caregiverApi = {
    * @returns {Promise} 包含照服員資料的 Promise 物件
    */
   getCaregiverById(id) {
-    return axiosInstance.get(`/caregivers/${id}`);
+    return axiosInstance.get(`/caregiver/${id}`);
   },
 
   /**
@@ -41,7 +38,7 @@ export const caregiverApi = {
    * @returns {Promise} 包含搜尋結果的 Promise 物件
    */
   searchCaregivers(name) {
-    return axiosInstance.get('/caregivers/search', { 
+    return axiosInstance.get('/caregiver/search', { 
       params: { name } 
     });
   },
@@ -52,7 +49,7 @@ export const caregiverApi = {
    * @returns {Promise} 包含照服員資料的 Promise 物件
    */
   getCaregiversByStatus(isActive) {
-    return axiosInstance.get(`/caregivers/status/${isActive}`);
+    return axiosInstance.get(`/caregiver/status/${isActive}`);
   },
 
   /**
@@ -61,7 +58,7 @@ export const caregiverApi = {
    * @returns {Promise} 包含搜尋結果的 Promise 物件
    */
   getCaregiversByServiceArea(area) {
-    return axiosInstance.get('/caregivers/service-area', { 
+    return axiosInstance.get('/caregiver/service-area', { 
       params: { area } 
     });
   },
@@ -80,7 +77,7 @@ export const caregiverApi = {
    * @returns {Promise} 包含新建照服員資料的 Promise 物件
    */
   createCaregiver(caregiverRequestDto) {
-    return axiosInstance.post('/caregivers', caregiverRequestDto);
+    return axiosInstance.post('/caregiver', caregiverRequestDto);
   },
 
   /**
@@ -90,7 +87,7 @@ export const caregiverApi = {
    * @returns {Promise} 包含更新後照服員資料的 Promise 物件
    */
   updateCaregiver(id, caregiverRequestDto) {
-    return axiosInstance.put(`/caregivers/${id}`, caregiverRequestDto);
+    return axiosInstance.put(`/caregiver/${id}`, caregiverRequestDto);
   },
 
  /**
@@ -99,7 +96,7 @@ export const caregiverApi = {
  * @returns {Promise} 包含刪除結果的 Promise 物件
  */
 deleteCaregiver(id) {
-  return axiosInstance.delete(`/caregivers/${id}`);
+  return axiosInstance.delete(`/caregiver/${id}`);
 },
 
   /**
@@ -109,7 +106,7 @@ deleteCaregiver(id) {
    * @returns {Promise} 包含更新結果的 Promise 物件
    */
   updateCaregiverRating(id, rating) {
-    return axiosInstance.post(`/caregivers/${id}/rating`, null, {
+    return axiosInstance.post(`/caregiver/${id}/rating`, null, {
       params: { rating }
     });
   },
@@ -125,7 +122,7 @@ deleteCaregiver(id) {
     if (excludeId) {
       params.excludeId = excludeId;
     }
-    return axiosInstance.get('/caregivers/check-phone', { params });
+    return axiosInstance.get('/caregiver/check-phone', { params });
   },
 
   /**
@@ -144,7 +141,7 @@ deleteCaregiver(id) {
       console.log('FormData 內容:', pair[0], pair[1]);
     }
     
-    return axiosInstance.post(`/caregivers/${id}/photo`, formData, {
+    return axiosInstance.post(`/caregiver/${id}/photo`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

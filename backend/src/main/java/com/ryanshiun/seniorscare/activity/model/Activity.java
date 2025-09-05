@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
-public class Activity {
+public class Activity { // 主表
     private Integer id;
     private String name;
     private String category;

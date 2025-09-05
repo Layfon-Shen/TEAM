@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Caregiver {
-
     private Integer caregiverId;
     private String chineseName;
     private Boolean gender; // 0=女性, 1=男性
@@ -26,4 +25,13 @@ public class Caregiver {
     private Boolean isActive = true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String selfIntroduction;
+
+  public String getSelfIntroduction() {
+    return selfIntroduction;
+  }
+
+  public void setSelfIntroduction(String selfIntroduction) {
+    this.selfIntroduction = selfIntroduction;
+  }
 }

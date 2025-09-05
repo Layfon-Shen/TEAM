@@ -1264,7 +1264,7 @@ window.addEventListener('load',function() {
                     $('.clock-minutes').html(event.strftime('%M'));
                     $('.clock-seconds').html(event.strftime('%S'));
                 });
-            };
+            }
         },
 
         // Accordion

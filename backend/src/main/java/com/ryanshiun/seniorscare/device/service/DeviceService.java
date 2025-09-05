@@ -3,6 +3,7 @@ package com.ryanshiun.seniorscare.device.service;
 import com.ryanshiun.seniorscare.device.dto.DeviceResponse;
 import com.ryanshiun.seniorscare.device.model.Device;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 public interface DeviceService {
@@ -23,7 +24,7 @@ public interface DeviceService {
     Integer addDevice(Device device);
 
     // 更新輔具（依 id）
-    boolean updateDevice(Device device);
+    boolean updateDevice(Device device) throws URISyntaxException;
 
     // 刪除輔具
     boolean deleteDeviceById(Integer id);

@@ -114,9 +114,8 @@ export const employeeApi = {
   requestReset(email) {
     // URL 編碼 email 地址以避免特殊字符問題
     const encodedEmail = encodeURIComponent(email);
-    console.log(`[employeeApi.js] 發送驗證碼請求到: /pwdReset/${encodedEmail}`);
     
-    return axiosInstance.post(`/pwdReset/${encodedEmail}`);
+    return axiosInstance.post(`/employees/pwdReset/${encodedEmail}`);
   },
 
   /**
@@ -130,9 +129,8 @@ export const employeeApi = {
   validateResetCode(email, pwdResetDto) {
     // URL 編碼 email 地址以避免特殊字符問題
     const encodedEmail = encodeURIComponent(email);
-    console.log(`[employeeApi.js] 驗證重設密碼請求到: /pwdReset/${encodedEmail}`, pwdResetDto);
     
-    return axiosInstance.put(`/pwdReset/${encodedEmail}`, pwdResetDto, {
+    return axiosInstance.put(`/employees/pwdReset/${encodedEmail}`, pwdResetDto, {
       headers: {
         'Content-Type': 'application/json'
       }

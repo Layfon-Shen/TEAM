@@ -35,4 +35,6 @@ public interface ReservationService {
     List<RoomTypeRanking> getRoomTypeRanking(int topN);
     
     ReservationDetail getDetailById(int reservationId);
+    
+    boolean updateStatus(int reservationId, int status, String note);
 }

@@ -31,7 +31,7 @@ public class FacilityServiceImpl implements FacilityService {
     ).toAbsolutePath().normalize();
 
     // 存到 DB 的公開前綴（無前導斜線）
-    private final String publicPrefix = "roomImg";
+    private final String publicPrefix = "images/RoomImg";
 
     public FacilityServiceImpl(FacilityDao dao) {
         this.dao = dao;

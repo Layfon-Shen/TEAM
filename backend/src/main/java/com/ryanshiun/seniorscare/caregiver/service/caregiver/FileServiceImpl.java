@@ -86,8 +86,10 @@ public class FileServiceImpl implements FileService {
 
             // 移除 Web 路徑前綴，轉換為檔案系統路徑
             String relativePath = filePath.startsWith("/images/")
-                ? filePath.substring(8)
-                : filePath;
+
+                    ? filePath.substring(8)
+                    : filePath;
+
 
             Path fullPath = Paths.get("uploads/images", relativePath);
             System.out.println("準備刪除檔案: " + fullPath.toAbsolutePath());

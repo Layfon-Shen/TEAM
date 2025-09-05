@@ -3,7 +3,7 @@
     <div class="card h-100">
       <div class="card-body">
         <div class="d-flex flex-wrap align-items-center justify-content-between">
-          <h6 class="text-lg mb-0">Sales Statistic</h6>
+          <h6 class="text-lg mb-0">年度銷售金額統計</h6>
           <select class="form-select bg-base form-select-sm w-auto radius-8">
             <option>Yearly</option>
             <option>Monthly</option>
@@ -12,13 +12,13 @@
           </select>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2 mt-8">
-          <h6 class="mb-0">$27,200</h6>
+          <h6 class="mb-0">$88,750</h6>
           <span
             class="text-sm fw-semibold rounded-pill bg-success-focus text-success-main border br-success px-8 py-4 line-height-1 d-flex align-items-center gap-1"
           >
             10% <iconify-icon icon="bxs:up-arrow" class="text-xs"></iconify-icon>
           </span>
-          <span class="text-xs fw-medium">+ $1500 Per Day</span>
+          <span class="text-xs fw-medium">+ $850 Per Day</span>
         </div>
         <div id="chart" class="pt-28 apexcharts-tooltip-style-1"></div>
       </div>
@@ -28,13 +28,15 @@
 
 <script>
 import ApexCharts from 'apexcharts';
-import { onMounted } from 'vue';
+import { onMounted, nextTick } from 'vue';
 
 export default {
   name: 'SalesStatistic',
   setup() {
-    onMounted(() => {
-      var options = {
+    const renderChart = async () => {
+      await nextTick(); // 確保 DOM 已完全渲染
+
+      const options = {
         series: [
           {
             name: 'This month',
@@ -94,11 +96,15 @@ export default {
           },
           borderColor: '#D1D5DB',
           strokeDashArray: 3,
+          padding: {
+            left: 10, // 增加內部邊距，避免線超出
+            right: 10,
+          },
         },
         yaxis: {
-          min:6,
-          max:36,
-          tickAmount:5,
+          min: 6,
+          max: 36,
+          tickAmount: 5,
           labels: {
             formatter: function (value) {
               return '$' + value + 'k';
@@ -148,11 +154,16 @@ export default {
               color: '#487FFF40',
             },
           },
+          tickPlacement: 'on', // 確保刻度線在範圍內
         },
       };
 
-      var chart = new ApexCharts(document.querySelector('#chart'), options);
+      const chart = new ApexCharts(document.querySelector('#chart'), options);
       chart.render();
+    };
+
+    onMounted(() => {
+      renderChart(); // 確保圖表在 DOM 完全渲染後初始化
     });
   },
 };

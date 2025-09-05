@@ -31,4 +31,7 @@ public interface CartDao {
     BigDecimal calcTotalAmount(Cart cart);
     // 下完訂單後需移除購物車 member_id 關聯，下一次新增購物車才會是新的購物車
     void removeCartByMemberId(Integer memberId);
+
+
+
 }

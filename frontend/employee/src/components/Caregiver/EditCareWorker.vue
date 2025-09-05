@@ -179,6 +179,24 @@
                     </select>
                   </div>
 
+                  <!-- 自我介紹 -->
+                  <div class="mb-20">
+                    <label for="selfIntroduction" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                      自我介紹
+                    </label>
+                    <textarea
+                      v-model="form.selfIntroduction"
+                      class="form-control radius-8"
+                      id="selfIntroduction"
+                      placeholder="請輸入個人工作經驗、專業證照、服務特色等介紹..."
+                      rows="5"
+                      maxlength="1000"
+                    ></textarea>
+                    <small class="text-muted">
+                      {{ form.selfIntroduction?.length || 0 }} / 1000 字
+                    </small>
+                  </div>
+
                   <!-- 在職狀態 -->
                   <div class="mb-20">
                     <label class="form-label fw-semibold text-primary-light text-sm mb-8">
@@ -299,6 +317,7 @@ export default {
       phone: '',
       email: '',
       experienceYears: null,
+      selfIntroduction: '',  // 新增自我介紹欄位
       photo: '',
       address: '',
       serviceArea: '',
@@ -313,12 +332,10 @@ export default {
     const loading = ref(false);
     const error = ref(null);
 
-    // 服務區域選項
+    // 服務區域選項 - 桃園市行政區
     const serviceAreas = [
-      '台北市', '新北市', '桃園市', '台中市', '台南市', '高雄市', 
-      '基隆市', '新竹市', '新竹縣', '苗栗縣', '彰化縣', '南投縣', 
-      '雲林縣', '嘉義市', '嘉義縣', '屏東縣', '宜蘭縣', '花蓮縣', 
-      '台東縣', '澎湖縣', '金門縣', '連江縣'
+      '桃園區', '中壢區', '大溪區', '楊梅區', '蘆竹區', '大園區',
+      '龜山區', '八德區', '龍潭區', '平鎮區', '新屋區', '觀音區', '復興區'
     ];
 
     // 載入照服員資料
@@ -448,7 +465,9 @@ if (uploadFile.value) {
           message: `更新照服員: ${form.chineseName} 資料`,
           type: 'success'
         });
-        router.push('/caregiver/list');
+        
+        // 更新成功後導向到照服員詳細頁面，使用正確的路由路徑
+        router.push(`/care-worker/${caregiverId}`);
       } catch (error) {
         showToast({
           title: '更新失敗 !',

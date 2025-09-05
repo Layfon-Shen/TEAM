@@ -1,10 +1,11 @@
 package com.ryanshiun.seniorscare.security;
 
-import com.ryanshiun.seniorscare.member.service.JwtTokenProvider;
+import com.ryanshiun.seniorscare.member.dto.enums.TokenState;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // 放行 Preflight
+
+        // CORS Preflight 請求通常是 OPTIONS method，直接放行
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
@@ -39,21 +41,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // 登入 & 忘記密碼一律放行
-        if (path.startsWith("/api/auth/") && path.startsWith("/api/pwdReset")) {
+        if (path.startsWith("/api/auth/") || path.startsWith("/api/pwdReset")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 1. 取出 Bearer token
+        // 取出 Bearer token
         String token = resolveToken(request);
 
-        // 2. 驗證 & 設定 SecurityContext
-        if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
+        // 如果沒有 token，直接放行，交給 security 做後續判斷
+        if(Strings.isBlank(token)){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        TokenState tokenState = jwtTokenProvider.validateToken(token);
+
+        // 驗證 & 設定 SecurityContext
+        if (tokenState != TokenState.INVALID) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
-        // 3. 繼續執行其它 filter
+        // 繼續執行其它 filter
         filterChain.doFilter(request, response);
     }
 

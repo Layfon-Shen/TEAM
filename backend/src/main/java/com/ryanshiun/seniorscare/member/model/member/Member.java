@@ -11,6 +11,9 @@ public class Member {
     @JsonProperty("member_id")
     private int memberId;
 
+    @JsonProperty("line_user_id")
+    private String lineUserId;
+
     @JsonProperty("member_name")
     private String memberName;
 
@@ -19,24 +22,22 @@ public class Member {
 
     private Boolean gender;
     private Date birthday;
+    private String address;
+    private String email;
+    @JsonProperty("image_path")
+    private String imagePath;
 
     @JsonProperty("is_active")
     private Boolean active;
 
-    @JsonProperty("ban_at")
-    private Date banAt;
-
     @JsonProperty("ban_reason")
     private String banReason;
 
-    @JsonProperty("caregiver_name")
-    private String caregiverName;
-
-    @JsonProperty("caregiver_phone")
-    private String caregiverPhone;
-
     @JsonProperty("created_at")
-    private LocalDateTime createdAt;
+    private Date createdAt;
+
+    @JsonProperty("updated_at")
+    private LocalDateTime updatedAt;
 
     @JsonProperty("login_at")
     private LocalDateTime loginAt;

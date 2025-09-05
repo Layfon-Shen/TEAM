@@ -6,11 +6,14 @@ import com.ryanshiun.seniorscare.device.model.Device;
 import com.ryanshiun.seniorscare.device.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
@@ -62,13 +65,34 @@ public class DeviceController {
     public boolean updateDevice(@RequestBody DeviceRequest request, @RequestParam Integer id) {
         Device device = toEntity(request);
         device.setId(id);
-        return deviceService.updateDevice(device);
+        System.out.println(request.getImage());
+        try {
+            return deviceService.updateDevice(device);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     // 刪除商品
     @DeleteMapping("/{id}")
-    public boolean deleteDevice(@PathVariable Integer id) {
-        return deviceService.deleteDeviceById(id);
+    public ResponseEntity<?> deleteDevice(@PathVariable Integer id) {
+        try {
+            boolean success = deviceService.deleteDeviceById(id);
+            if (success) {
+                return ResponseEntity.ok("刪除成功");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("找不到該輔具");
+            }
+        } catch (DataIntegrityViolationException e) {
+            //  關鍵改動：捕捉外鍵衝突
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("該輔具已有訂單紀錄，無法刪除，請改為下架");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("刪除失敗，請稍後再試");
+        }
     }
 
     // 模糊搜尋
@@ -151,15 +175,29 @@ public class DeviceController {
         return deviceService.updateDevicesBatch(devices);
     }
 
-
     /**
      * 批次刪除多筆輔具
      * @param ids 要刪除的商品 ID 列表
      * @return 全部刪除成功回 true，否則 false
      */
     @DeleteMapping("/batch")
-    public boolean batchDeleteDevices(@RequestBody List<Integer> ids) {
-        return deviceService.deleteDevicesBatch(ids);
+    public ResponseEntity<?> batchDeleteDevices(@RequestBody List<Integer> ids) {
+        try {
+            boolean success = deviceService.deleteDevicesBatch(ids);
+            if (success) {
+                return ResponseEntity.ok("批次刪除成功");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("部分或全部輔具不存在，刪除失敗");
+            }
+        } catch (DataIntegrityViolationException e) {
+            // 如果其中一個 device 被訂單引用，會觸發這裡
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("部分輔具已有訂單紀錄，無法刪除，請改為下架");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("批次刪除失敗，請稍後再試");
+        }
     }
 
     // 處理圖片上傳

@@ -7,18 +7,18 @@ import java.time.LocalDateTime;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.ryanshiun.seniorscare.bus.model.Reservation;
+import com.ryanshiun.seniorscare.bus.model.BusReservation;
 
 /**
  * 用來把「資料庫查詢結果的每一列」轉成 Java 的 Reservation 物件
  */
 
-public class ReservationRowMapper implements RowMapper<Reservation> {
+public class ReservationRowMapper implements RowMapper<BusReservation> {
 
 	@Override
-	public Reservation mapRow(ResultSet rSet, int rowNum) throws SQLException {
+	public BusReservation mapRow(ResultSet rSet, int rowNum) throws SQLException {
 
-		Reservation reservation = new Reservation();
+		BusReservation reservation = new BusReservation();
 		reservation.setId(rSet.getInt("id"));
 		reservation.setMemberId(rSet.getInt("member_id"));
 		reservation.setBusId(rSet.getInt("bus_id"));

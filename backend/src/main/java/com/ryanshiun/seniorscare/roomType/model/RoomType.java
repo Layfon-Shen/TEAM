@@ -16,7 +16,10 @@ public class RoomType {
     private String imagePath;
     @JsonProperty("is_available")
     private boolean isAvailable;
+    @JsonProperty("admin_note")
     private String adminNote;
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
+    @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
 }

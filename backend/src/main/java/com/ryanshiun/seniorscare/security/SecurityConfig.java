@@ -27,6 +27,22 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtFilter;
 
+    @Autowired
+    private LineMemberService lineMemberService;
+
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
+    @Autowired
+    private OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -37,32 +53,39 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 異常處理設定
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(infoEndpoint -> infoEndpoint.userService(lineMemberService))
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler)
+                )
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
                         // 所有人都能訪問的 API
-                        .requestMatchers("/api/pwdReset/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/employees/pwdReset/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
-                        // EMPLOYEE 權限 - 登入即可使用
-                        .requestMatchers(HttpMethod.PUT, "/api/employees/reset/{empId}").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/employees/{empId}").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/employees").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/employees/{empId}/roles").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/employees/{empId}").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/employees/roles").authenticated()
 
-                        // MANAGER 權限
-                        .requestMatchers(HttpMethod.PUT, "/api/employees/{empId}/roles").hasRole("MANAGER")
+                        // 會員 + 訪客都可以使用，只有 GET 方法允許所有人訪問
+                        .requestMatchers(HttpMethod.GET).permitAll()
 
-                        // ADMIN 權限
-                        .requestMatchers(HttpMethod.PUT, "/api/employees/{empId}/status").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/employees").hasRole("ADMIN")
+                        // 會員專屬 - 登入即可使用
+                        .requestMatchers(HttpMethod.PUT, "/api/members/me").hasRole("MEMBER")
+
+                        // 員工專屬 - 登入即可使用
+                        .requestMatchers("/api/employees/**").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
+                        .requestMatchers("/api/members/**").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
+
                         // 組員 api 預設都為登入即可使用
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .build();
     }

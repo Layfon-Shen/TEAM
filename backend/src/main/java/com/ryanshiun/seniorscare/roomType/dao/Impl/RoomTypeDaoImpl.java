@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.ryanshiun.seniorscare.roomType.dao.RoomTypeDao;
+import com.ryanshiun.seniorscare.roomType.model.RoomComment;
 import com.ryanshiun.seniorscare.roomType.model.RoomType;
 import com.ryanshiun.seniorscare.roomType.rowmapper.RoomTypeRowMapper;
 
@@ -253,4 +254,6 @@ public class RoomTypeDaoImpl implements RoomTypeDao {
             return namedJdbc.queryForObject(sql.toString(), params, Integer.class);
         }
     }
+    
+    
 }

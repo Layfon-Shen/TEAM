@@ -1,122 +1,88 @@
 --Rehabus
-CREATE TABLE dbo.rehabus (
+CREATE TABLE rehabus (
 
-bus_id               INT   IDENTITY(1,1)     PRIMARY KEY               NOT NULL,           --¨®½ø¬y¤ô¸¹
-car_dealership       NVARCHAR(100)                                     NOT NULL,           --¨®¦æ
-bus_brand            NVARCHAR(100)                                     NOT NULL,           --¨T¨®¼tµP
-bus_model            NVARCHAR(100)                                     NOT NULL,           --«¬¸¹
-seat_capacity        INT                                               NOT NULL,           --¤@¯ë®y¦ì
-wheelchair_capacity  INT                                               NOT NULL,           --½ü´È®y¦ì
-license_plate        NVARCHAR(20)                                      NOT NULL UNIQUE,    --¨®µP¸¹½X
+bus_id               INT   IDENTITY(1,1)     PRIMARY KEY               NOT NULL,           --ï¿½ï¿½ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½
+car_dealership       NVARCHAR(100)                                     NOT NULL,           --ï¿½ï¿½ï¿½ï¿½
+bus_brand            NVARCHAR(100)                                     NOT NULL,           --ï¿½Tï¿½ï¿½ï¿½tï¿½P
+bus_model            NVARCHAR(100)                                     NOT NULL,           --ï¿½ï¿½ï¿½ï¿½
+seat_capacity        INT                                               NOT NULL,           --ï¿½@ï¿½ï¿½yï¿½ï¿½
+wheelchair_capacity  INT                                               NOT NULL,           --ï¿½ï¿½ï¿½È®yï¿½ï¿½
+license_plate        NVARCHAR(20)               UNIQUE                 NOT NULL,           --ï¿½ï¿½ï¿½Pï¿½ï¿½ï¿½X
 );
 
--- DBCC CHECKIDENT ('dbo.rehabus', RESEED, 0);
+--DBCC CHECKIDENT ('dbo.rehabus', RESEED, 0);
 
-ALTER TABLE dbo.rehabus
-ADD    status        NVARCHAR(20)        NOT NULL CONSTRAINT DF_rehabus_status DEFAULT N'Active';      --¬£»ºª¬ºA                   
+ALTER TABLE rehabus
+ADD    status        NVARCHAR(20)        NOT NULL CONSTRAINT DF_rehabus_status DEFAULT N'Active';      --ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½A                     
 
---------------------------------------¸Õºâ²¼»ù------------------------------------------------------                                                            
-CREATE TABLE FareZone (                                                                    -- ¦æ¬F°Ïªí
-zone_id             INT   IDENTITY(1,1)     PRIMARY KEY               NOT NULL,            -- °Ï°ì½s¸¹
-zone_name           NVARCHAR(200)                                     NOT NULL,            -- °Ï°ì¦WºÙ
-description         NVARCHAR(MAX)                                     NULL                 -- ¸É¥R»¡©ú
+--------------------------------------ï¿½Õºâ²¼ï¿½ï¿½------------------------------------------------------                                                            
+CREATE TABLE FareZone (                                                                    -- ï¿½ï¿½Fï¿½Ïªï¿½
+zone_id             INT   IDENTITY(1,1)     PRIMARY KEY               NOT NULL,            -- ï¿½Ï°ï¿½sï¿½ï¿½
+zone_name           NVARCHAR(200)                                     NOT NULL,            -- ï¿½Ï°ï¿½Wï¿½ï¿½
+description         NVARCHAR(MAX)                                     NULL                 -- ï¿½É¥Rï¿½ï¿½ï¿½ï¿½
 );
 
 
 CREATE TABLE FarePrice (
-price_id            INT    IDENTITY(1,1)    PRIMARY KEY               NOT NULL,            -- ½s¸¹
-from_zone_id        INT                                               NOT NULL,            -- FK¡÷FareZone(id)
-to_zone_id          INT                                               NOT NULL,            -- FK¡÷FareZone(id)
-price               INT                    CHECK (price > 0)          NOT NULL,            -- »ù®æ
-actual_distance_km  DECIMAL(6,2)          NULL CHECK (actual_distance_km >= 0),            -- ¦^¶Çgoogle API¤½¨½¼Æ"  
-price_status        NVARCHAR(20)                  NOT NULL   DEFAULT N'Active',            -- »ù®æª¬ºA(¦³®É­Ô·|½Õº¦)
+price_id            INT    IDENTITY(1,1)    PRIMARY KEY               NOT NULL,            -- ï¿½sï¿½ï¿½
+from_zone_id        INT                                               NOT NULL,            -- FKï¿½ï¿½FareZone(id)
+to_zone_id          INT                                               NOT NULL,            -- FKï¿½ï¿½FareZone(id)
+price               INT                    CHECK (price > 0)          NOT NULL,            -- ï¿½ï¿½ï¿½ï¿½
+actual_distance_km  DECIMAL(6,2)          NULL CHECK (actual_distance_km >= 0),            -- ï¿½^ï¿½ï¿½google APIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"  
+price_status        NVARCHAR(20)                  NOT NULL   DEFAULT N'Active',            -- ï¿½ï¿½ï¿½æª¬ï¿½A(ï¿½ï¿½ï¿½É­Ô·|ï¿½Õºï¿½)
    
---CONSTRAINT FK_FarePrice_FromZone  FOREIGN KEY(from_zone_id)          REFERENCES FareZone(zone_id),
---CONSTRAINT FK_FarePrice_ToZone    FOREIGN KEY(to_zone_id)            REFERENCES FareZone(zone_id),
-
 );
 
 
---------------------------------------¹w¬ù-------------------------------------------------------------- 
+--------------------------------------ï¿½wï¿½ï¿½-------------------------------------------------------------- 
 
-CREATE TABLE Reservation (
-id                  BIGINT   IDENTITY(1,1)    PRIMARY KEY             NOT NULL,             -- ½s¸¹
-member_id           BIGINT                                            NOT NULL,             -- FK¡÷member(id)
-bus_id              INT                                               NOT NULL,             -- FK¡÷rehabus(bus_id)¡A«ü¬£¨®½ø
-start_zone_id       INT                                               NOT NULL,             -- FK¡÷FareZone(id)¡A¥Xµo¦ì¸m
-end_zone_id         INT                                               NOT NULL,             -- FK¡÷FareZone(id)¡A¨ì¹F¦ì¸m
-created_at          DATETIME                 NOT NULL DEFAULT SYSUTCDATETIME(),             -- ­q³æ«Ø¥ß®É¶¡¡Aª½±µ¨ú¥Î¥Ø«e®É¶¡
-scheduled_at        DATETIME NOT NULL CHECK (scheduled_at >= SYSUTCDATETIME()),             -- ¹w¬ù·f¨®®É¶¡
-completed_at        DATETIME    CHECK (completed_at >= scheduled_at)      NULL,             -- ­q³æ§¹­¼®É¶¡(¥Ñ¨t²Î©Î«á¥x§ó·s) 
-price               INT                   CHECK (price > 0)           NOT NULL,             -- »ù®æ
-reservation_status  NVARCHAR(20)                   NOT NULL  DEFAULT N'Active',             -- ­q³æª¬ºA
-note                NVARCHAR(255)                                         NULL,             -- ¨ä¥L³Æµù
-
---CONSTRAINT FK_Reservation_Member      FOREIGN KEY(member_id)         REFERENCES member(id), --­n³s±µ·|­ûªºªí
---CONSTRAINT FK_Reservation_Bus         FOREIGN KEY(bus_id)            REFERENCES rehabus(bus_id),
---CONSTRAINT FK_Reservation_StartZone   FOREIGN KEY(start_zone_id)     REFERENCES FareZone(zone_id),
---CONSTRAINT FK_Reservation_EndZone     FOREIGN KEY(end_zone_id)       REFERENCES FareZone(zone_id)
-
+CREATE TABLE BusReservation (
+id                  INT   IDENTITY(1,1)    PRIMARY KEY                NOT NULL,             -- ï¿½sï¿½ï¿½
+member_id           INT                                               NOT NULL,             -- FKï¿½ï¿½member(id)
+bus_id              INT                                               NOT NULL,             -- FKï¿½ï¿½rehabus(bus_id)ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+start_zone_id       INT                                                   NULL,             -- FKï¿½ï¿½FareZone(id)ï¿½Aï¿½Xï¿½oï¿½ï¿½m
+end_zone_id         INT                                                   NULL,             -- FKï¿½ï¿½FareZone(id)ï¿½Aï¿½ï¿½Fï¿½ï¿½m
+created_at          DATETIME                                          NOT NULL,             -- ï¿½qï¿½ï¿½Ø¥ß®É¶ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¥Ø«eï¿½É¶ï¿½
+scheduled_at        DATETIME                                          NOT NULL,             -- ï¿½wï¿½ï¿½ï¿½fï¿½ï¿½ï¿½É¶ï¿½
+completed_at        DATETIME                                              NULL,             -- ï¿½qï¿½æ§¹ï¿½ï¿½ï¿½É¶ï¿½(ï¿½Ñ¨tï¿½Î©Î«ï¿½xï¿½ï¿½s) 
+price               INT                   CHECK (price > 0)           NOT NULL,             -- ï¿½ï¿½ï¿½ï¿½
+reservation_status  NVARCHAR(20)                   NOT NULL  DEFAULT N'Active',             -- ï¿½qï¿½æª¬ï¿½A
+note                NVARCHAR(255)                                         NULL              -- ï¿½ï¿½Lï¿½Æµï¿½
 );
 
+ALTER TABLE BusReservation
+ADD    start_address       NVARCHAR(MAX)                               NOT NULL,            -- ï¿½_ï¿½Iï¿½aï¿½}
+       end_address         NVARCHAR(MAX)                               NOT NULL,            -- ï¿½ï¿½ï¿½Iï¿½aï¿½}  
+       start_lat           DECIMAL(9,6)                                    NULL,            -- ï¿½_ï¿½Iï¿½nï¿½ï¿½
+       start_lng           DECIMAL(9,6)                                    NULL,            -- ï¿½_ï¿½Iï¿½gï¿½ï¿½ 
+       end_lat             DECIMAL(9,6)                                    NULL,            -- ï¿½ï¿½ï¿½Iï¿½nï¿½ï¿½
+       end_lng             DECIMAL(9,6)                                    NULL,            -- ï¿½ï¿½ï¿½Iï¿½gï¿½ï¿½ 
+       distance_meters     INT                                             NULL;            -- ï¿½Zï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
 
-----------------------------------------µû½×--------------------------------------------------------------
-
-CREATE TABLE Comment (
-comment_id          BIGINT   IDENTITY(1,1)    PRIMARY KEY             NOT NULL,             -- ½s¸¹
-reservation_id      BIGINT                    UNIQUE                  NOT NULL,             -- FK¡÷Reservation(id)
-member_id           BIGINT                                            NOT NULL,             -- FK¡÷member(id)¡A¶ñ¼gµû½×ªº·|­û
-rating              INT               NOT NULL  CHECK (rating BETWEEN 1 AND 5),             -- µû¤À¡A1-5
-comment_text        NVARCHAR(MAX)                                         NULL,             -- µû½×¤º®e
-created_at          DATETIME                 NOT NULL DEFAULT SYSUTCDATETIME(),             -- µû½×«Ø¥ß®É¶¡
-
---CONSTRAINT FK_Comment_ReservationId      FOREIGN KEY(reservation_id)     REFERENCES Reservation(id) ON DELETE CASCADE,
---CONSTRAINT FK_Comment_Member             FOREIGN KEY(member_id)          REFERENCES member(id)      ON DELETE CASCADE
-);
-
-
-
-CREATE TABLE Reply (
-reply_id            BIGINT   IDENTITY(1,1)    PRIMARY KEY             NOT NULL,             -- ½s¸¹
-comment_id          BIGINT                                            NOT NULL,             -- FK¡÷Comment(id)
-member_id           BIGINT                                                NULL,             -- FK¡÷member(id)¡A¶ñ¼gµû½×ªº·|­û
-user_id             BIGINT                                                NULL,             -- FK¡÷Employee(user_ID)
-user_reply          NVARCHAR(MAX)                                         NULL,             -- «á¥x¦^ÂÐ
-reply_at            DATETIME                     NULL DEFAULT SYSUTCDATETIME(),             -- «á¥x¦^ÂÐ®É¶¡
-
---CONSTRAINT FK_Reply_CommentId           FOREIGN KEY(comment_id)         REFERENCES Comment(id) ON DELETE CASCADE,
---CONSTRAINT FK_Reply_Member              FOREIGN KEY(member_id)          REFERENCES member(id)  ON DELETE CASCADE, 
---CONSTRAINT FK_Reply_Employee            FOREIGN KEY(user_id)            REFERENCES employee(user_ID)  ON DELETE CASCADE, 
-
---CONSTRAINT CK_Reply_ExactlyOneUser CHECK((member_id IS NOT NULL AND user_id IS NULL) OR ( member_id IS NULL AND user_id IS NOT NULL))
-);
 
 /*Rehabus*/
-INSERT INTO rehabus (car_dealership, bus_brand, bus_model, seat_capacity, wheelchair_capacity, license_plate)
-VALUES
-  ('Taipei Motors',  'Toyota',    'Coaster', 20, 2, 'AB-1234'),
-  ('Kaohsiung Auto', 'Ford',      'Transit', 18, 3, 'AC-2345'),
-  ('Taichung Wheels','Mercedes',  'Sprinter',15, 4, 'AD-3456'),
-  ('Tainan Vehicle', 'Nissan',    'Civilian',12, 1, 'AE-4567'),
-  ('Hualien Mobility','Volkswagen','Crafter',16, 2, 'AF-5678');
+INSERT INTO rehabus (car_dealership, bus_brand, bus_model, seat_capacity, wheelchair_capacity, license_plate) VALUES
+  -- ï¿½jï¿½ï¿½ï¿½]ï¿½yï¿½ï¿½14ï¿½Aï¿½ï¿½ï¿½ï¿½6ï¿½^
+  ('ï¿½ï¿½ï¿½ï¿½ï¿½È¹B',               'Isuzu',          'Journey K',           12, 6, 'WAC-0172'),
+  ('ï¿½ï¿½ï¿½È¹B',               'Isuzu',          'Gala Mio',            12, 5, 'WCA-4033'),
+  ('ï¿½ï¿½ï¿½cï¿½È¹B',               'Scania',         'Touring',             13, 6, 'WCB-8891'),
+  ('ï¿½Ö­Û¥ï¿½qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',   'Hino',           'Liesse II',           10, 5, 'WAD-0953'),
+  ('ï¿½Í³qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',       'Volvo',          '9700',                14, 6, 'WBA-2045'),
 
-   /*FareZone*/
-INSERT INTO FareZone (zone_name) VALUES ('Äª¦Ë°Ï1');
-INSERT INTO FareZone (zone_name) VALUES ('¤¤Ãc°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('¥­Âí°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('Àt¤s°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('¤K¼w°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('·¨±ö°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('¤j·Ë°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('¤j¶é°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('®ç¶é°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('·s«Î°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('Æ[­µ°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('Às¼æ°Ï');
-INSERT INTO FareZone (zone_name) VALUES ('´_¿³°Ï');
+  -- ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½yï¿½ï¿½8ï¿½Aï¿½ï¿½ï¿½ï¿½5ï¿½^
+  ('ï¿½Í³qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',       'Ford',           'Transita',            4, 4, 'WDC-5124'),
+  ('ï¿½Ö­Û¥ï¿½qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',   'Volkswagen',     'Crafter',             4, 3, 'WDA-3308'),
+  ('ï¿½Ö­Û¥ï¿½qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',   'Nissan',         'Civilian',            6, 5, 'WBD-6612'),
+  ('ï¿½@ï¿½ï¿½ï¿½pï¿½È¨ï¿½ï¿½ï¿½ï¿½î¦³ï¿½ï¿½ï¿½ï¿½ï¿½q', 'Mitsubishi',     'Fuso Rosa',           8, 5, 'WCC-7459'),
+  ('ï¿½@ï¿½ï¿½ï¿½pï¿½È¨ï¿½ï¿½ï¿½ï¿½î¦³ï¿½ï¿½ï¿½ï¿½ï¿½q', 'Toyota',         'Coaster',             8, 5, 'WEJ-4421'),
 
-/*FarePrice*/
-INSERT INTO FarePrice (from_zone_id, to_zone_id, price, actual_distance_km, price_status) VALUES (1, 3, 450, 14, 'Active');
-INSERT INTO FarePrice (from_zone_id, to_zone_id, price, actual_distance_km, price_status) VALUES (1, 3, 900, 14, 'Closed');
-INSERT INTO FarePrice (from_zone_id, to_zone_id, price, actual_distance_km, price_status) VALUES (1, 5, 360, 8.7, 'Active');
-INSERT INTO FarePrice (from_zone_id, to_zone_id, price, actual_distance_km, price_status) VALUES (3, 3, 200, 5, 'Active');
+  -- ï¿½pï¿½ï¿½ï¿½]ï¿½yï¿½ï¿½2ï¿½Aï¿½ï¿½ï¿½ï¿½1ï¿½^
+  ('ï¿½@ï¿½ï¿½ï¿½pï¿½È¨ï¿½ï¿½ï¿½ï¿½î¦³ï¿½ï¿½ï¿½ï¿½ï¿½q', 'Ford',           'Transit',             2, 1, 'WEF-0109'),
+  ('ï¿½@ï¿½ï¿½ï¿½pï¿½È¨ï¿½ï¿½ï¿½ï¿½î¦³ï¿½ï¿½ï¿½ï¿½ï¿½q', 'Ford',           'Kombi-Limited',       2, 1, 'WER-9051'),
+  ('ï¿½Í³qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',       'Volkswagen',     'T6.1 Caravelle',      1, 1, 'WEM-7834'),
+  ('ï¿½Í³qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',       'Hyundai',        'STARIA',              2, 1, 'WEZ-3017'),
+  ('ï¿½Ö­Û¥ï¿½qï¿½Ñ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q',   'Ford',           'Kombi-Trend',         2, 1, 'WEP-2256');
+
+
+SELECT * FROM rehabus
+SELECT * FROM BusReservation

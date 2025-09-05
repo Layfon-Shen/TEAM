@@ -31,7 +31,7 @@ public class ResRequest {
 	private int endZone;
 
 	@NotNull(message = "請提供要預約的時間")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd['T'][' ']HH:mm")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd['T'][' ']HH:mm[:ss]")
 	private LocalDateTime scheduledAt;
 
 	private int price;

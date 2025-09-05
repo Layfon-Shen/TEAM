@@ -69,7 +69,7 @@ public class CaregiverDAOImpl implements CaregiverDAO {
     public Caregiver save(Caregiver caregiver) {
         String sql = "INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, " +
                 "photo, address, service_area, average_rating, total_ratings, total_points, " +
-                "is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "is_active, created_at, updated_at, self_introduction) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         LocalDateTime now = LocalDateTime.now();
@@ -90,7 +90,8 @@ public class CaregiverDAOImpl implements CaregiverDAO {
             ps.setBoolean(12, caregiver.getIsActive());
             ps.setTimestamp(13, Timestamp.valueOf(now));
             ps.setTimestamp(14, Timestamp.valueOf(now));
-            return ps;
+          ps.setString(15, caregiver.getSelfIntroduction());
+          return ps;
         }, keyHolder);
 
         caregiver.setCaregiverId(keyHolder.getKey().intValue());
@@ -105,27 +106,27 @@ public class CaregiverDAOImpl implements CaregiverDAO {
         String sql = "UPDATE caregiver SET chinese_name = ?, gender = ?, phone = ?, email = ?, " +
                 "experience_years = ?, photo = ?, address = ?, service_area = ?, " +
                 "average_rating = ?, total_ratings = ?, total_points = ?, is_active = ?, " +
-                "updated_at = ? WHERE caregiver_id = ?";
+                "updated_at = ?, self_introduction = ? WHERE caregiver_id = ?";
 
         LocalDateTime now = LocalDateTime.now();
 
-        jdbcTemplate.update(sql,
-                caregiver.getChineseName(),
-                caregiver.getGender(),
-                caregiver.getPhone(),
-                caregiver.getEmail(),
-                caregiver.getExperienceYears(),
-                caregiver.getPhoto(),
-                caregiver.getAddress(),
-                caregiver.getServiceArea(),
-                caregiver.getAverageRating(),
-                caregiver.getTotalRatings(),
-                caregiver.getTotalPoints(),
-                caregiver.getIsActive(),
-                Timestamp.valueOf(now),
-                caregiver.getCaregiverId()
-        );
-
+      jdbcTemplate.update(sql,
+          caregiver.getChineseName(),          // 1
+          caregiver.getGender(),               // 2
+          caregiver.getPhone(),                // 3
+          caregiver.getEmail(),                // 4
+          caregiver.getExperienceYears(),      // 5
+          caregiver.getPhoto(),                // 6
+          caregiver.getAddress(),              // 7
+          caregiver.getServiceArea(),          // 8
+          caregiver.getAverageRating(),        // 9
+          caregiver.getTotalRatings(),         // 10
+          caregiver.getTotalPoints(),          // 11
+          caregiver.getIsActive(),             // 12
+          Timestamp.valueOf(now),              // 13 (updated_at)
+          caregiver.getSelfIntroduction(),     // 14 (self_introduction)
+          caregiver.getCaregiverId()           // 15 (WHERE 條件)
+      );
         caregiver.setUpdatedAt(now);
         return caregiver;
     }

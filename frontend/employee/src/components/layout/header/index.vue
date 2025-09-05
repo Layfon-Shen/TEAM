@@ -16,36 +16,30 @@
     <div class="sidebar-menu-area">
       <ul class="sidebar-menu">
         <!-- Dashboard 首頁 -->
-        <li :class="{ dropdown: true, open: activeDropdown === 'dashboard' }">
-          <a href="javascript:void(0)" @click="toggleDropdown('dashboard')" :class="{ active: isDashboardActive }">
-            <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon" />
-            <span>Dashboard</span>
-            <span class="dropdown-arrow" :class="{ rotated: activeDropdown === 'dashboard' }"></span>
-          </a>
-
-          <!-- Transition wrapper -->
-          <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave"
-            @leave="leave" @after-leave="afterLeave">
-            <ul v-show="activeDropdown === 'dashboard'" ref="dashboardMenu" class="sidebar-submenu">
-              <li v-for="item in dashboardItems" :key="item.path"
-                :class="['nav-link', { 'active-page': isActive(item.path) }]">
-                <router-link :to="item.path">
-                  <i class="ri-circle-fill circle-icon" :class="item.colorClass" />
-                  {{ item.label }}
-                </router-link>
-              </li>
-            </ul>
-          </transition>
+        <li>
+          <router-link to="/" :class="{ active: isDashboardActive }" active-class="active">
+            <iconify-icon icon="mdi:chart-box-outline" class="menu-icon" />
+            <span>數據分析</span>
+          </router-link>
         </li>
 
         <!-- 後台管理 -->
         <li class="sidebar-menu-group-title">資料管理</li>
 
-        <!-- Employee -->
+        <!-- Member 會員管理 -->
+        <li>
+          <router-link to="/member" :class="{ active: isMemberActive }" active-class="active">
+            <!-- 更換會員管理的 icon -->
+            <iconify-icon icon="mdi:account-group-outline" class="menu-icon"></iconify-icon>
+            <span>會員管理</span>
+          </router-link>
+        </li>
+
+        <!-- Employee 員工管理 -->
         <li :class="{ dropdown: true, open: activeDropdown === 'employee' }">
           <a href="javascript:void(0)" @click="toggleDropdown('employee')" :class="{ active: isEmployeeActive }">
-            <!-- 使用員工相關的圖示 -->
-            <iconify-icon icon="ph:users-three-duotone" class="menu-icon"></iconify-icon>
+            <!-- 更換員工管理的 icon -->
+            <iconify-icon icon="mdi:account-tie-outline" class="menu-icon"></iconify-icon>
             <span>員工管理</span>
             <span class="dropdown-arrow" :class="{ rotated: activeDropdown === 'employee' }"></span>
           </a>
@@ -81,18 +75,18 @@
           </transition>
         </li>
 
-        <!-- 行政區管理選單 -->
-        <li :class="{ dropdown: true, open: activeDropdown === 'farezone' }">
-          <a href="javascript:void(0)" @click="toggleDropdown('farezone')" :class="{ active: isFarezoneActive }">
-            <!-- 使用地圖相關的圖示 -->
-            <iconify-icon icon="mdi:map-marker-outline" class="menu-icon"></iconify-icon>
-            <span>行政區管理</span>
-            <span class="dropdown-arrow" :class="{ rotated: activeDropdown === 'farezone' }"></span>
+        <!-- 預約管理選單 -->
+        <li :class="{ dropdown: true, open: activeDropdown === 'reservation' }">
+          <a href="javascript:void(0)" @click="toggleDropdown('reservation')" :class="{ active: isReservationActive }">
+            <!-- 使用預約相關的圖示 -->
+            <iconify-icon icon="mdi:calendar-clock" class="menu-icon"></iconify-icon>
+            <span>預約管理</span>
+            <span class="dropdown-arrow" :class="{ rotated: activeDropdown === 'reservation' }"></span>
           </a>
           <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave"
             @leave="leave" @after-leave="afterLeave">
-            <ul v-show="activeDropdown === 'farezone'" ref="farezoneMenu" class="sidebar-submenu">
-              <li v-for="item in farezoneItems" :key="item.path"
+            <ul v-show="activeDropdown === 'reservation'" ref="reservationMenu" class="sidebar-submenu">
+              <li v-for="item in reservationItems" :key="item.path"
                 :class="['nav-link', { 'active-page': isActive(item.path) }]">
                 <router-link :to="item.path">
                   <i class="ri-circle-fill circle-icon" :class="item.colorClass" />{{ item.label }}</router-link>
@@ -101,7 +95,7 @@
           </transition>
         </li>
 
-        <!-- 房型與設施 Room Type -->
+        <!-- Room Type -->
         <li :class="{ dropdown: true, open: activeDropdown === 'room-type' }">
           <a href="javascript:void(0)" @click="toggleDropdown('room-type')" :class="{ active: isRoomTypeActive }">
             <iconify-icon icon="ph:door" class="menu-icon"></iconify-icon>
@@ -123,7 +117,7 @@
         <!-- deivece 輔具管理項目 -->
         <li :class="{ dropdown: true, open: activeDropdown === 'device' }">
           <a href="javascript:void(0)" @click="toggleDropdown('device')" :class="{ active: isDeviceActive }">
-            <iconify-icon icon="mdi:medical-bag" class="menu-icon"></iconify-icon>
+            <iconify-icon icon="ph:wheelchair-duotone" class="menu-icon"></iconify-icon>
             <span>輔具管理</span>
             <span class="dropdown-arrow" :class="{ rotated: activeDropdown === 'device' }"></span>
           </a>
@@ -193,9 +187,16 @@ const activeDropdown = ref(null);
 const isMobileOpen = ref(false);
 
 // 首頁
-const dashboardItems = [
-  { path: '/', label: '首頁', colorClass: 'text-success-600 w-auto' },
-];
+
+// 判斷首頁選單是否應該高亮顯示
+const isDashboardActive = computed(() => {
+  return route.path === '/' || route.path === '/dashboard' || route.path === '/home';
+});
+
+// 判斷會員管理選單是否應該高亮顯示 
+const isMemberActive = computed(() => {
+  return route.path.startsWith('/member') || route.path === '/member' || route.path.includes('/member');
+});
 
 // 員工管理選單項目
 const employeeItems = [
@@ -229,30 +230,36 @@ onMounted(() => {
   }
 });
 
-// 行政區管理選單項目
-const farezoneItems = [
-  { path: '/farezone/list', label: '行政區列表', colorClass: 'text-primary-600 w-auto' },
-  { path: '/farezone/add', label: '新增行政區', colorClass: 'text-success-main w-auto' },
+// 預約管理選單項目
+const reservationItems = [
+  { path: '/reservation/list', label: '預約列表', colorClass: 'text-primary-600 w-auto' },
+  { path: '/reservation/add', label: '新增預約', colorClass: 'text-success-main w-auto' },
 ];
 
-// 判斷行政區管理選單是否應該高亮顯示
-const isFarezoneActive = computed(() => farezoneItems.some(item => isActive(item.path)) ||
-  route.path.startsWith('/farezone/edit/'));
+// 判斷預約管理選單是否應該高亮顯示
+const isReservationActive = computed(() => reservationItems.some(item => isActive(item.path)) ||
+  route.path.startsWith('/reservation/edit/'));
 
-// 請建立房型管理的 roomTypeItems 陣列
+// 請建立房型管理的 roomTypeItems 陣列，格式同 employeeItems
 const roomTypeItems = [
   { path: '/roomType/RoomList', label: '房型列表', colorClass: 'text-primary-600 w-auto' },
-  { path: '/roomType/RoomAdd', label: '新增房型', colorClass: 'text-info-main w-auto' },
+  { path: '/roomType/FacilityList', label: '設施列表', colorClass: 'text-success-main w-auto' },
+  { path: '/roomType/FeatureList', label: '特徵標籤管理', colorClass: 'text-warning-main w-auto' },
+  { path: '/roomType/ReservationList', label: '預約管理', colorClass: 'text-danger-main w-auto' },
+  { path: '/roomType/CommentList', label: '留言管理', colorClass: 'text-warning-main w-auto' },
+  { path: '/roomType/Dashboard', label: '統計儀表板', colorClass: 'text-info-main w-auto' },
 ];
+
 
 // 判斷房型管理選單是否應該高亮顯示
 const isRoomTypeActive = computed(() => roomTypeItems.some(item => isActive(item.path)));
 
 // 新增輔具管理選單項目
 const deviceItems = [
-  { path: '/device/list', label: '輔具列表', colorClass: 'text-success-main w-auto' },
-  { path: '/device/category', label: '輔具分類', colorClass: 'text-success-main w-auto' },
-  { path: '/device/import', label: '批次匯入', colorClass: 'text-warning-main w-auto' },
+  { path: '/device/list', label: '輔具列表', colorClass: 'text-primary-600 w-auto' },
+  { path: '/device/category', label: '輔具分類', colorClass: 'text-warning-main w-auto' },
+  // 新增訂單管理
+  { path: '/device/order', label: '訂單管理', colorClass: 'text-success-main w-auto' },
 ];
 
 // 判斷輔具管理選單是否應該高亮顯示
@@ -261,7 +268,8 @@ const isDeviceActive = computed(() => deviceItems.some(item => isActive(item.pat
 
 // 活動管理選單項目
 const activityItems = [
-  { path: '/activity/list', label: '活動列表', colorClass: 'text-primary-600 w-auto' },
+  { path: '/activity/list', label: '活動列表', colorClass: 'text-success-600 w-auto' },
+  { path: '/activity/reservation', label: '活動報名管理', colorClass: 'text-warning-600 w-auto' },
 ];
 
 // 判斷活動管理選單是否應該高亮顯示
@@ -270,6 +278,8 @@ const isActivityActive = computed(() => activityItems.some(item => isActive(item
 // 照服員管理選單項目
 const caregiverItems = [
   { path: '/caregiver/list', label: '照服員列表', colorClass: 'text-primary-600 w-auto' },
+  { path: '/caregiver/appointments', label: '預約訂單列表', colorClass: 'text-success-main w-auto' }, 
+  { path: '/caregiver/schedule', label: '照服員班表', colorClass: 'text-warning-main w-auto' },
 ];
 
 // 判斷照服員管理選單是否應該高亮顯示

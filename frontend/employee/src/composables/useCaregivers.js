@@ -5,7 +5,7 @@ import { caregiverService } from '@/services/caregiverService';
  * 照服員狀態管理 Composable
  * 負責照服員資料的狀態管理和快取
  */
-export function useCaregivers() {
+export function useCaregivers(options = {}) {
   // 響應式狀態
   const caregivers = ref([]);
   const loading = ref(false);
@@ -80,6 +80,11 @@ export function useCaregivers() {
       loading.value = false;
     }
   };
+
+  // 如果設定了 autoLoad，則自動載入資料
+  if (options.autoLoad) {
+    loadCaregivers();
+  }
 
   /**
    * 根據篩選條件搜尋照服員
@@ -178,9 +183,20 @@ export function useCaregivers() {
         caregivers.value[index] = updatedCaregiver;
       }
 
-      // 如果是當前檢視的照服員，也更新
+      // 如果是當前檢視的照服員，也更新並確保評價資訊正確
       if (currentCaregiver.value && currentCaregiver.value.id === id) {
-        currentCaregiver.value = updatedCaregiver;
+        currentCaregiver.value = {
+          ...updatedCaregiver,
+          // 確保評價資訊不會遺失
+          averageRating: updatedCaregiver.averageRating || 0,
+          totalRatings: updatedCaregiver.totalRatings || 0,
+          totalPoints: updatedCaregiver.totalPoints || 0
+        };
+        console.log('currentCaregiver 更新後的評價資訊:', {
+          averageRating: currentCaregiver.value.averageRating,
+          totalRatings: currentCaregiver.value.totalRatings,
+          totalPoints: currentCaregiver.value.totalPoints
+        });
       }
 
       return updatedCaregiver;

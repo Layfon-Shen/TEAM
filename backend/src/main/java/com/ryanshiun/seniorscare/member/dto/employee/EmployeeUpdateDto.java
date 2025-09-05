@@ -7,7 +7,6 @@ import lombok.Data;
 public class EmployeeUpdateDto {
     @NotNull
     private String empName;
-    @NotNull
     private  String email;
     private String imagePath;
     private String describe;

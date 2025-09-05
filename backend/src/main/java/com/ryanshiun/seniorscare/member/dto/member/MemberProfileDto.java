@@ -1,23 +1,23 @@
 package com.ryanshiun.seniorscare.member.dto.member;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 public class MemberProfileDto {
-    @NotBlank @Size(min = 2, max = 50)
+    private int memberId;
     private String memberName;
-    @NotBlank
     private String mainPhone;
-    @NotNull
     private Boolean gender;
-    @NotNull
     private Date birthday;
-    @Size(min=2, max=50)
-    private String caregiverName;
-    private String caregiverPhone;
+    private String address;
+    private String email;
+    private String imagePath;
+    private Boolean active;
+    private String banReason;
+    private Date createdAt;
+    private LocalDateTime updatedAt;
+    private  LocalDateTime loginAt;
 }

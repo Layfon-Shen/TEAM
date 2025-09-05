@@ -28,40 +28,38 @@ public class CaregiverAppointmentDaoImpl implements CaregiverAppointmentDao {
     @Autowired
     private CaregiverAppointmentRowMapper appointmentRowMapper;
 
-    @Override
-    public Integer createAppointment(CaregiverAppointmentCreateDto createDto) {
-        String sql = """
-            INSERT INTO caregiver_appointment (
-                member_id, caregiver_id, scheduled_at, end_time, status, is_blocked,
-                service_type_id, service_location, total_amount, notes, block_type,
-                created_by_type, created_by_member_id, created_by_employee_id, created_at
-            ) VALUES (
-                :memberId, :caregiverId, :scheduledAt, :endTime, :status, :isBlocked,
-                :serviceTypeId, :serviceLocation, :totalAmount, :notes, :blockType,
-                :createdByType, :createdByMemberId, :createdByEmployeeId, SYSDATETIME()
-            )
-            """;
+  @Override
+  public Integer createAppointment(CaregiverAppointmentCreateDto createDto) {
+    String sql = """
+        INSERT INTO caregiver_appointment (
+            member_id, caregiver_id, scheduled_at, end_time, status, is_blocked,
+            service_type_id, service_location, total_amount, notes, block_type,
+            created_at
+        ) VALUES (
+            :memberId, :caregiverId, :scheduledAt, :endTime, :status, :isBlocked,
+            :serviceTypeId, :serviceLocation, :totalAmount, :notes, :blockType,
+            SYSDATETIME()
+        )
+        """;
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("memberId", createDto.getMemberId());
-        params.put("caregiverId", createDto.getCaregiverId());
-        params.put("scheduledAt", createDto.getScheduledAt());
-        params.put("endTime", createDto.getEndTime());
-        params.put("status", createDto.getStatus());
-        params.put("isBlocked", createDto.getIsBlocked());
-        params.put("serviceTypeId", createDto.getServiceTypeId());
-        params.put("serviceLocation", createDto.getServiceLocation());
-        params.put("totalAmount", createDto.getTotalAmount());
-        params.put("notes", createDto.getNotes());
-        params.put("blockType", createDto.getBlockType());
-        params.put("createdByType", createDto.getCreatedByType());
-        params.put("createdByMemberId", createDto.getCreatedByMemberId());
-        params.put("createdByEmployeeId", createDto.getCreatedByEmployeeId());
+    Map<String, Object> params = new HashMap<>();
+    params.put("memberId", createDto.getMemberId());
+    params.put("caregiverId", createDto.getCaregiverId());
+    params.put("scheduledAt", createDto.getScheduledAt());
+    params.put("endTime", createDto.getEndTime());
+    params.put("status", createDto.getStatus());
+    params.put("isBlocked", createDto.getIsBlocked());
+    params.put("serviceTypeId", createDto.getServiceTypeId());
+    params.put("serviceLocation", createDto.getServiceLocation());
+    params.put("totalAmount", createDto.getTotalAmount());
+    params.put("notes", createDto.getNotes());
+    params.put("blockType", createDto.getBlockType());
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(params), keyHolder);
-        return keyHolder.getKey().intValue();
-    }
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(params), keyHolder);
+    return keyHolder.getKey().intValue();
+  }
+
 
     @Override
     public CaregiverAppointment getAppointmentById(Integer id) {
@@ -293,44 +291,97 @@ public class CaregiverAppointmentDaoImpl implements CaregiverAppointmentDao {
 
     // 私有方法：建立 WHERE 條件
     private void buildWhereClause(StringBuilder sql, Map<String, Object> params, CaregiverAppointmentQueryDto queryDto) {
-        if (queryDto.getMemberId() != null) {
-            sql.append(" AND member_id = :memberId");
-            params.put("memberId", queryDto.getMemberId());
-        }
+      if (queryDto.getMemberId() != null) {
+        sql.append(" AND member_id = :memberId");
+        params.put("memberId", queryDto.getMemberId());
+      }
 
-        if (queryDto.getCaregiverId() != null) {
-            sql.append(" AND caregiver_id = :caregiverId");
-            params.put("caregiverId", queryDto.getCaregiverId());
-        }
+      if (queryDto.getCaregiverId() != null) {
+        sql.append(" AND caregiver_id = :caregiverId");
+        params.put("caregiverId", queryDto.getCaregiverId());
+      }
 
-        if (queryDto.getStatus() != null) {
-            sql.append(" AND status = :status");
-            params.put("status", queryDto.getStatus());
-        }
+      if (queryDto.getStatus() != null) {
+        sql.append(" AND status = :status");
+        params.put("status", queryDto.getStatus());
+      }
 
-        if (queryDto.getIsBlocked() != null) {
-            sql.append(" AND is_blocked = :isBlocked");
-            params.put("isBlocked", queryDto.getIsBlocked());
-        }
+      if (queryDto.getIsBlocked() != null) {
+        sql.append(" AND is_blocked = :isBlocked");
+        params.put("isBlocked", queryDto.getIsBlocked());
+      }
 
-        if (queryDto.getStartDate() != null) {
-            sql.append(" AND scheduled_at >= :startDate");
-            params.put("startDate", queryDto.getStartDate());
-        }
+      if (queryDto.getStartDate() != null) {
+        sql.append(" AND scheduled_at >= :startDate");
+        params.put("startDate", queryDto.getStartDate());
+      }
 
-        if (queryDto.getEndDate() != null) {
-            sql.append(" AND scheduled_at <= :endDate");
-            params.put("endDate", queryDto.getEndDate());
-        }
+      if (queryDto.getEndDate() != null) {
+        sql.append(" AND scheduled_at <= :endDate");
+        params.put("endDate", queryDto.getEndDate());
+      }
 
-        if (queryDto.getCreatedByType() != null) {
-            sql.append(" AND created_by_type = :createdByType");
-            params.put("createdByType", queryDto.getCreatedByType());
-        }
-
-        if (queryDto.getIsRated() != null) {
-            sql.append(" AND is_rated = :isRated");
-            params.put("isRated", queryDto.getIsRated());
-        }
+      if (queryDto.getIsRated() != null) {
+        sql.append(" AND is_rated = :isRated");
+        params.put("isRated", queryDto.getIsRated());
+      }
     }
+  @Override
+  public Integer getCountByStatus(String status) {
+    String sql;
+    Map<String, Object> params = new HashMap<>();
+
+    if (status == null) {
+      sql = "SELECT COUNT(*) FROM caregiver_appointment";
+    } else {
+      sql = "SELECT COUNT(*) FROM caregiver_appointment WHERE status = :status";
+      params.put("status", status);
+    }
+
+    Integer count = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+    return count != null ? count : 0;
+  }
+
+  @Override
+  public Integer getCountByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    String sql = """
+            SELECT COUNT(*) FROM caregiver_appointment 
+            WHERE created_at >= :startDate AND created_at < :endDate
+            """;
+
+    Map<String, Object> params = new HashMap<>();
+    params.put("startDate", startDate);
+    params.put("endDate", endDate);
+
+    Integer count = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+    return count != null ? count : 0;
+  }
+
+  @Override
+  public List<CaregiverAppointment> checkTimeConflictForConfirmedAppointments(
+      Integer caregiverId, LocalDateTime startTime, LocalDateTime endTime, Integer excludeId) {
+
+    StringBuilder sql = new StringBuilder("""
+        SELECT * FROM caregiver_appointment 
+        WHERE caregiver_id = :caregiverId 
+        AND status IN ('approved', 'completed') 
+        AND (
+            (scheduled_at <= :startTime AND end_time > :startTime) OR
+            (scheduled_at < :endTime AND end_time >= :endTime) OR
+            (scheduled_at >= :startTime AND end_time <= :endTime)
+        )
+        """);
+
+    Map<String, Object> params = new HashMap<>();
+    params.put("caregiverId", caregiverId);
+    params.put("startTime", startTime);
+    params.put("endTime", endTime);
+
+    if (excludeId != null) {
+      sql.append(" AND id != :excludeId");
+      params.put("excludeId", excludeId);
+    }
+
+    return namedParameterJdbcTemplate.query(sql.toString(), params, appointmentRowMapper);
+  }
 }

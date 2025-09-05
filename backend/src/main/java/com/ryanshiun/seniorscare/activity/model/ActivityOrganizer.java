@@ -4,7 +4,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ActivityOrganizer {
+public class ActivityOrganizer { // 主辦方更新內容表
     private Integer id;
     private Integer activityId;
     private String  title;

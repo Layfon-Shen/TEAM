@@ -1,3 +1,21 @@
+CREATE TABLE member (
+    member_id    INT           IDENTITY(1,1) PRIMARY KEY,
+    line_user_id NVARCHAR(255) NOT NULL,              -- LINE userId
+    member_name  NVARCHAR(100) NOT NULL,
+    main_phone   VARCHAR(20)   NULL,                       
+    gender       BIT           NULL,
+    birthday     DATE          NULL,
+    address      NVARCHAR(100) NULL,
+    email        NVARCHAR(200) NULL,                      
+    image_path   NVARCHAR(500) NULL,                      
+    is_active    BIT           DEFAULT 1,
+    ban_reason   NVARCHAR(MAX) NULL,
+    created_at   DATE          DEFAULT CAST(SYSUTCDATETIME() AS DATE),  
+    updated_at   DATETIME2     DEFAULT SYSUTCDATETIME(),
+    login_at     DATETIME2     DEFAULT SYSUTCDATETIME()
+);
+
+
 CREATE TABLE employee (
       emp_id          INT             IDENTITY(1,1)  PRIMARY KEY,
       emp_name        NVARCHAR(50)    NOT NULL UNIQUE,
@@ -34,60 +52,43 @@ CREATE TABLE pwdReset (
 SELECT * from employee
 DROP TABLE employee
 
--- ¥˙∏’∏ÍÆ∆
--- 1. ¥°§J 3 ∫ÿ®§¶‚
+-- Ê∏¨Ë©¶Ë≥áÊñô Âì°Â∑•ÁôªÂÖ• Â∏≥Ëôü: test1@gmail.com ÂØÜÁ¢º 123456
+-- 1. ÊèíÂÖ• 3 Á®ÆËßíËâ≤
 INSERT INTO emp_role (role_name)
 VALUES 
   ('ROLE_ADMIN'),
   ('ROLE_EMPLOYEE'),
   ('ROLE_MANAGER');
 
--- 2. ¥°§J 3 ¶Ï≠˚§u°]®‰ælƒÊ¶Ï±ƒ•Œπw≥]≠»°^πw≥]±KΩX 123456
-INSERT INTO employee (emp_name, password, email, image_path, describe)
+-- 2. ÊèíÂÖ•Âì°Â∑•Ë≥áÊñô 
+INSERT INTO employee (emp_name, password, email, is_active, image_path, describe)
 VALUES
-  ('alice',   '$2a$10$ncv2xzeO8gEjsJXLwbqh3uHfdYQ6eLLc5AYq1NI8J0BWp9KjsiVdW',   'test1@gmail.com',   '/images/alice.png',   'Alice ≠t≥d´e∫›∂}µo'),
-  ('bob',     '$2a$10$ncv2xzeO8gEjsJXLwbqh3uHfdYQ6eLLc5AYq1NI8J0BWp9KjsiVdW',    'test2@gmail.com',     '/images/2.png',     'Bob ≠t≥d´·∫›™A∞»'),
-  ('carol',   '$2a$10$ncv2xzeO8gEjsJXLwbqh3uHfdYQ6eLLc5AYq1NI8J0BWp9KjsiVdW',     'test3@gmail.com',   '/images/3.png',   'Carol ≠t≥d¥˙∏’ªP≥°∏p');
+(N'Ryan', N'$2a$10$rkVDwHUZBMf8BjmswGMJTe0GxnmzCoIR/TFBkGBX83pW2wNse2lVu', N'test1@gmail.com', 1, N'/images/emp1.png', N'Alice Test5'),
 
--- 3. ´ÿ•ﬂ≠˚§uªP®§¶‚™∫πÔ¿≥
+(N'ÊùéÂ∞èÂ∏•', N'$2a$10$rkVDwHUZBMf8BjmswGMJTe0GxnmzCoIR/TFBkGBX83pW2wNse2lVu', N'ryanshiun0@gmail.com', 1, N'/images/emp2.png', N'‰øÆÊîπÊ∏¨Ë©¶'),
+
+(N'carol', N'$2a$12$kebR9FEdWqdkxlomsnezZuZt2881tXPORANkUg4IsqZ/tLbMXv6UWy', N'a0968399426@gmail.com', 1, N'/images/emp3.png', N'ÂèØÈÄ≤Ë°åÈ©óË≠âÁ¢ºÂØÑÈÄÅ'),
+
+(N'ÊùéÂÜ∞ÂÜ∞', N'$2a$12$kebR9FEdWqdkxlomsnezZuZt2881tXPORANkUg4IsqZ/tLbMXv6UWy', N'test4@gmail.com', 1, N'/images/emp4.png', 'Êñ∞‰æÜÁöÑËèúÈ≥•'),
+
+(N'ÊùéÂ§ßÂ∏•', N'$2a$12$kebR9FEdWqdkxlomsnezZuZt2881tXPORANkUg4IsqZ/tLbMXv6UWy', N'test5@gmail.com', 1, N'/images/emp5.png', N'Alice Ë≤†Ë≤¨ÂâçÁ´ØÈñãÁôº'),
+
+(N'Êùé‰∏Ä', N'$2a$12$kebR9FEdWqdkxlomsnezZuZt2881tXPORANkUg4IsqZ/tLbMXv6UWy', N'test6@gmail.com', 1, N'/images/emp6.png', N'Bob Ë≤†Ë≤¨ÂæåÁ´ØÊúçÂãô'),
+
+(N'john', N'$2a$12$kebR9FEdWqdkxlomsnezZuZt2881tXPORANkUg4IsqZ/tLbMXv6UWy', N'test9@gmail.com', 1, N'/images/emp7.png', 'ËÄÅÁ∑¥Â∑•Á®ãÂ∏´'),
+
+(N'Euf', N'$2a$12$kebR9FEdWqdkxlomsnezZuZt2881tXPORANkUg4IsqZ/tLbMXv6UWy', N'test11@gmail.com', 1, N'/images/emp8.png', 'ÊäÄË°ìÈ°ßÂïè'),
+
+(N'Bad Guys', N'$2a$12$kebR9FEdWqdkxlomsnezZuZt2881tXPORANkUg4IsqZ/tLbMXv6UWy', N'tset@gmail.com', 0, N'/images/emp8.png', 'ÂÄãÊÄßÂæàÂ•áÁâπ');
+
+
+
+-- 3. Âª∫Á´ãÂì°Â∑•ËàáËßíËâ≤ÁöÑÂ∞çÊáâ
 INSERT INTO emp_has_role (emp_id, role_id)
 VALUES
-  (1, 1),   -- alice °˜ Admin + Manager
+  (1, 1),   -- alice ‚Üí Admin + Manager
   (1, 2),
-  (2, 2),   -- bob   °˜ Manager
-  (3, 3);   -- carol °˜ Employee
+  (2, 2),   -- bob   ‚Üí Manager
+  (3, 3);   -- carol ‚Üí Employee
 
-
--- ©|•º•Œ®Ï
-CREATE TABLE emp_log (
-     id          BIGINT      IDENTITY(1,1) PRIMARY KEY,
-     emp_name    NVARCHAR(50)    NOT NULL UNIQUE,
-     action      VARCHAR(50) NOT NULL,
-     target_name NVARCHAR(50)    NOT NULL UNIQUE,
-     created_at  DATETIME2   NOT NULL DEFAULT SYSUTCDATETIME()
-);
-
-
-CREATE TABLE member (
-      member_id       INT            IDENTITY(1,1)    PRIMARY KEY,
-      member_name       NVARCHAR(50)   NOT NULL,
-      main_phone      VARCHAR(20)    NOT NULL          UNIQUE,
-      gender          BIT            NOT NULL,
-      birthday      DATE           NOT NULL,
-      is_active       BIT                           DEFAULT 1,
-      ban_at          DATE           NULL,
-      ban_reason      NVARCHAR(MAX)  NULL,
-      caregiver_name  NVARCHAR(50)   NULL,
-      caregiver_phone VARCHAR(20)                      UNIQUE,
-      created_at      DATETIME2                     DEFAULT SYSUTCDATETIME(),
-      login_at        DATETIME2                     DEFAULT SYSUTCDATETIME()
-);
-
-CREATE TABLE phone_verification (
-      id            BIGINT       IDENTITY(1,1)    PRIMARY KEY,
-      member_id     INT          NOT NULL,
-      otp_code      CHAR(6)      NOT NULL,
-      expires_at    DATETIME2    NOT NULL,
-      is_used       BIT                        DEFAULT 0,
-);
 

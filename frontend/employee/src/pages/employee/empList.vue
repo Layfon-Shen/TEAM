@@ -2,7 +2,7 @@
     <div class="dashboard-main-body">
 
         <!-- 引入員工表格元件 -->
-        <EmployeeTable
+        <EmployeeGrid
             :employees="employees"
             :roles="roles"
             :loading="isLoading"
@@ -32,7 +32,7 @@
 
 <script>
 import Breadcrumb from '@/components/breadcrumb/Breadcrumb.vue';
-import EmployeeTable from '@/components/Employee/EmployeeTable.vue';
+import EmployeeGrid from '@/components/Employee/EmployeeGrid.vue';
 import EmployeeDetail from '@/components/Employee/EmployeeDetail.vue';
 import AddEmployeeForm from '@/components/Employee/AddEmployeeForm.vue';
 import { useEmployees } from '@/composables/useEmployees';
@@ -42,7 +42,7 @@ export default {
     name: "EmpList",
     components: {
         Breadcrumb,
-        EmployeeTable,
+        EmployeeGrid,
         EmployeeDetail,
         AddEmployeeForm
     },

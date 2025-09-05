@@ -156,6 +156,36 @@
                   </select>
                 </div>
 
+                <!-- 自我介紹 -->
+                <div class="mb-20">
+                  <label for="selfIntroduction" class="form-label fw-semibold text-primary-light text-sm mb-8">
+                    自我介紹
+                  </label>
+                  <textarea
+                    v-model="form.selfIntroduction"
+                    class="form-control radius-8"
+                    id="selfIntroduction"
+                    placeholder="請輸入個人工作經驗、專業證照、服務特色等介紹..."
+                    rows="5"
+                    maxlength="1000"
+                  ></textarea>
+                  <small class="text-muted">
+                    {{ form.selfIntroduction?.length || 0 }} / 1000 字
+                  </small>
+                </div>
+
+                <!-- 測試資料按鈕 -->
+                <div class="d-flex align-items-center justify-content-center mb-20">
+                  <button
+                    type="button"
+                    class="btn btn-warning border border-warning-600 text-md px-32 py-8 radius-8"
+                    @click="fillTestData"
+                  >
+                    <iconify-icon icon="solar:test-tube-outline" class="me-2"></iconify-icon>
+                    填入測試資料
+                  </button>
+                </div>
+
                 <!-- 表單按鈕 -->
                 <div class="d-flex align-items-center justify-content-center gap-3">
                   <button
@@ -203,6 +233,7 @@ export default {
       phone: '',
       email: '',
       experienceYears: null,
+      selfIntroduction: '',  // 新增自我介紹欄位
       photo: '',
       address: '',
       serviceArea: ''
@@ -214,12 +245,10 @@ export default {
     const isSubmitting = ref(false);
     const phoneExists = ref(false);
 
-    // 服務區域選項
+    // 服務區域選項 - 桃園市行政區
     const serviceAreas = [
-      '台北市', '新北市', '桃園市', '台中市', '台南市', '高雄市', 
-      '基隆市', '新竹市', '新竹縣', '苗栗縣', '彰化縣', '南投縣', 
-      '雲林縣', '嘉義市', '嘉義縣', '屏東縣', '宜蘭縣', '花蓮縣', 
-      '台東縣', '澎湖縣', '金門縣', '連江縣'
+      '桃園區', '中壢區', '大溪區', '楊梅區', '蘆竹區', '大園區', 
+      '龜山區', '八德區', '龍潭區', '平鎮區', '新屋區', '觀音區', '復興區'
     ];
 
     // 處理圖片上傳
@@ -233,6 +262,56 @@ export default {
         };
         reader.readAsDataURL(file);
       }
+    };
+
+    // 填入測試資料
+    const fillTestData = () => {
+      // 產生隨機測試資料
+      const testNames = ['王美華', '李淑芳', '張惠雯', '陳靜宜', '林雅慧', '劉秀蘭', '黃淑玲', '吳麗雲'];
+      const testEmails = ['test1@example.com', 'test2@example.com', 'test3@example.com', 'test4@example.com'];
+      const testPhones = ['09123456718', '09223456789', '09345673890', '09456748901'];
+      const testAddresses = [
+        '桃園市桃園區中正路100號',
+        '桃園市中壢區中山路200號',
+        '桃園市大溪區和平路300號',
+        '桃園市楊梅區文化路400號'
+      ];
+      const testIntroductions = [
+        '您好，我從事照服工作已有多年經驗，擅長長者日常照護、用餐協助和個人衛生清潔。我具備耐心、細心的特質，能提供溫馨的照護服務，讓長者感受到家的溫暖。',
+        '我是專業的照服員，具有豐富的失智症照護經驗，能夠提供專業的認知訓練和日常生活協助。我相信每位長者都值得被尊重和關愛。',
+        '擁有照服員證照及多年實務經驗，專精於復健協助、移位技巧和生活自理訓練。我致力於維護長者的尊嚴，提供個人化的照護服務。',
+        '我熱愛照護工作，具備專業的醫療照護知識和溝通技巧。我能協助長者進行復健運動、藥物管理，並提供情感支持和陪伴。'
+      ];
+
+      // 隨機選擇測試資料
+      const randomIndex = Math.floor(Math.random() * testNames.length);
+      const randomEmailIndex = Math.floor(Math.random() * testEmails.length);
+      const randomPhoneIndex = Math.floor(Math.random() * testPhones.length);
+      const randomAddressIndex = Math.floor(Math.random() * testAddresses.length);
+      const randomIntroIndex = Math.floor(Math.random() * testIntroductions.length);
+      const randomGender = Math.random() > 0.5;
+      const randomExperience = Math.floor(Math.random() * 10) + 1; // 1-10年經驗
+      const randomServiceAreaIndex = Math.floor(Math.random() * serviceAreas.length);
+
+      // 填入表單資料
+      form.chineseName = testNames[randomIndex];
+      form.gender = randomGender;
+      form.phone = testPhones[randomPhoneIndex];
+      form.email = testEmails[randomEmailIndex];
+      form.experienceYears = randomExperience;
+      form.address = testAddresses[randomAddressIndex];
+      form.serviceArea = serviceAreas[randomServiceAreaIndex];
+      form.selfIntroduction = testIntroductions[randomIntroIndex];
+
+      // 重置電話檢查狀態
+      phoneExists.value = false;
+
+      // 顯示成功訊息
+      // showToast({
+      //   title: '測試資料已填入',
+      //   message: '所有欄位已自動填入測試資料',
+      //   type: 'info'
+      // });
     };
 
     // 檢查電話是否已存在
@@ -306,7 +385,8 @@ export default {
       onImageChange,
       checkPhoneExists,
       cancelForm,
-      submitForm
+      submitForm,
+      fillTestData
     };
   }
 };

@@ -1,6 +1,6 @@
-package com.ryanshiun.seniorscare.activity.DAO.Impl;
+package com.ryanshiun.seniorscare.activity.dao.Impl;
 
-import com.ryanshiun.seniorscare.activity.DAO.ActivityDao;
+import com.ryanshiun.seniorscare.activity.dao.ActivityDao;
 import com.ryanshiun.seniorscare.activity.dto.ActivityQueryParams;
 import com.ryanshiun.seniorscare.activity.model.Activity;
 import com.ryanshiun.seniorscare.activity.rowmapper.ActivityRowMapper;
@@ -164,4 +164,47 @@ public class ActivityDaoImpl implements ActivityDao {
 
         jdbcTemplate.update(sql, map);
     }
+
+    @Override
+    public int holdSeatsForRegistration(Integer activityId, int num, java.time.LocalDate today) {
+        String sql = """
+        UPDATE activity
+        SET [current] = [current] + :num
+        WHERE id = :aid
+          AND status = 1
+          AND :today BETWEEN registration_start AND registration_end
+          AND [current] + :num <= [limit]
+        """;
+        var p = new org.springframework.jdbc.core.namedparam.MapSqlParameterSource()
+                .addValue("aid", activityId)
+                .addValue("num", num)
+                .addValue("today", java.sql.Date.valueOf(today));
+        return jdbcTemplate.update(sql, p);
+    }
+
+    @Override
+    public int adjustSeats(Integer activityId, int delta, java.time.LocalDate today) {
+        String sql = """
+        UPDATE activity
+        SET [current] = [current] + :delta
+        WHERE id = :aid
+          AND [current] + :delta BETWEEN 0 AND [limit]
+          AND ( :delta <= 0
+                OR (status = 1 AND :today BETWEEN registration_start AND registration_end) )
+        """;
+        var p = new org.springframework.jdbc.core.namedparam.MapSqlParameterSource()
+                .addValue("aid", activityId)
+                .addValue("delta", delta)
+                .addValue("today", java.sql.Date.valueOf(today));
+        return jdbcTemplate.update(sql, p);
+    }
+
+    @Override
+    public void endRegistration(Integer id) {
+        final String sql = "UPDATE activity SET status = 0 WHERE id = :id";
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        jdbcTemplate.update(sql, map);
+    }
+
 }

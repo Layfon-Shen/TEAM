@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 @Validated
 @RestController
-@RequestMapping("/farezone")
+@RequestMapping("/api/farezone")
 @CrossOrigin(
 		originPatterns = "http://localhost:517*",
 				methods = {

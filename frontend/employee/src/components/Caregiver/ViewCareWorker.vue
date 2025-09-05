@@ -3,7 +3,7 @@
     <!-- 左側個人資料卡片 -->
     <div class="col-lg-5">
       <div class="user-grid-card position-relative border radius-16 overflow-hidden bg-base h-100">
-        <img src="@/assets/images/user-grid/user-grid-bg1.png" alt="" class="w-100 object-fit-cover" />
+        <div class="sky-blue-bg w-100" style="height: 120px; background: linear-gradient(135deg, #87CEEB 0%, #5DADE2 100%);"></div>
         <div class="pb-24 ms-16 mb-24 me-16 mt--100">
           <div class="text-center border border-top-0 border-start-0 border-end-0">
             <!-- 照服員照片 -->
@@ -58,29 +58,25 @@
     <div class="col-lg-7">
       <div class="card h-100">
         <div class="card-body p-24">
-          <!-- 標籤頁 -->
-          <ul class="nav border-gradient-tab nav-pills mb-20 d-inline-flex" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link d-flex align-items-center px-24" :class="{ active: activeTab === 'basic-info' }" @click="activeTab = 'basic-info'">
-                基本資訊
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link d-flex align-items-center px-24" :class="{ active: activeTab === 'service-history' }" @click="activeTab = 'service-history'">
-                服務紀錄
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link d-flex align-items-center px-24" :class="{ active: activeTab === 'ratings' }" @click="activeTab = 'ratings'">
-                評價統計
-              </button>
-            </li>
-          </ul>
+          <!-- 基本資訊標題 -->
+          <div class="d-flex align-items-center mb-20">
+            <h5 class="mb-0">詳細資訊</h5>
+          </div>
 
-          <!-- 標籤內容 -->
-          <div class="tab-content">
-            <!-- 基本資訊標籤 -->
-            <div v-if="activeTab === 'basic-info'">
+          <!-- 基本資訊內容 -->
+          <div>
+              <!-- 自我介紹區塊 -->
+              <div class="col-12 mb-20">
+                <div class="border radius-8 p-20">
+                  <h6 class="text-primary-light mb-16">自我介紹</h6>
+                  <div class="bg-light radius-8 p-16">
+                    <p class="mb-0 text-secondary-light" style="white-space: pre-wrap; line-height: 1.6;">
+                      {{ caregiver.selfIntroduction || '尚未填寫自我介紹' }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
               <div class="row">
                 <div class="col-md-6 mb-20">
                   <div class="border radius-8 p-20">
@@ -138,60 +134,6 @@
                 <button type="button" @click="goBack" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">返回</button>
                 <button type="button" @click="goToEdit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">編輯</button>
               </div>
-            </div>
-
-            <!-- 服務紀錄標籤 -->
-            <div v-if="activeTab === 'service-history'">
-              <div class="alert alert-info radius-8 mb-20">
-                服務紀錄功能尚在開發中...
-              </div>
-              
-              <!-- 服務紀錄示意 -->
-              <div class="border radius-8 p-20 mb-20">
-                <h6 class="text-primary-light mb-16">服務統計資訊</h6>
-                <div class="row">
-                  <div class="col-md-4 mb-16">
-                    <div class="d-flex flex-column align-items-center p-16 border radius-8">
-                      <h6 class="text-secondary-light">總服務次數</h6>
-                      <h2 class="text-primary-600 mb-0">0</h2>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mb-16">
-                    <div class="d-flex flex-column align-items-center p-16 border radius-8">
-                      <h6 class="text-secondary-light">總服務時數</h6>
-                      <h2 class="text-primary-600 mb-0">0</h2>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mb-16">
-                    <div class="d-flex flex-column align-items-center p-16 border radius-8">
-                      <h6 class="text-secondary-light">完成率</h6>
-                      <h2 class="text-primary-600 mb-0">0%</h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 評價統計標籤 -->
-            <div v-if="activeTab === 'ratings'">
-              <div class="alert alert-info radius-8 mb-20">
-                評價統計功能尚在開發中...
-              </div>
-              
-              <!-- 評價統計示意 -->
-              <div class="border radius-8 p-20 mb-20">
-                <h6 class="text-primary-light mb-16">評價分布</h6>
-                <div class="mb-16" v-for="i in 5" :key="i">
-                  <div class="d-flex align-items-center mb-8">
-                    <span class="me-16 text-nowrap">{{ 6 - i }} 星</span>
-                    <div class="progress w-100 bg-gray-50 radius-pill overflow-hidden" style="height: 8px;">
-                      <div class="progress-bar bg-warning-500" :style="{ width: i === 3 ? '60%' : i === 4 ? '30%' : i === 5 ? '10%' : '0%' }"></div>
-                    </div>
-                    <span class="ms-16 text-nowrap">{{ i === 3 ? '60%' : i === 4 ? '30%' : i === 5 ? '10%' : '0%' }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -222,7 +164,6 @@ export default {
     const route = useRoute();
 
     // 設定狀態
-    const activeTab = ref('basic-info');
     const caregiver = reactive({
       id: null,
       chineseName: '',
@@ -231,6 +172,7 @@ export default {
       phone: '',
       email: '',
       experienceYears: 0,
+      selfIntroduction: '',  // 新增自我介紹欄位
       photo: null,
       address: '',
       serviceArea: '',
@@ -251,8 +193,21 @@ export default {
         // 載入照服員詳細資料
         const data = await loadCaregiverById(props.caregiverId);
         
-        // 更新本地資料
-        Object.assign(caregiver, data);
+        // 更新本地資料，確保所有欄位都正確更新
+        Object.assign(caregiver, {
+          ...data,
+          // 確保評價資訊正確賦值
+          averageRating: data.averageRating || 0,
+          totalRatings: data.totalRatings || 0,
+          totalPoints: data.totalPoints || 0
+        });
+        
+        console.log('照服員資料載入完成:', caregiver);
+        console.log('評價資訊:', {
+          averageRating: caregiver.averageRating,
+          totalRatings: caregiver.totalRatings,
+          totalPoints: caregiver.totalPoints
+        });
       } catch (err) {
         console.error('載入照服員詳細資料失敗:', err);
       }
@@ -295,7 +250,6 @@ export default {
     });
 
     return {
-      activeTab,
       caregiver,
       loading,
       error,

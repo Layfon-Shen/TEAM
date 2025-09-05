@@ -16,21 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PaymentUpdateRequest {
 
-    /**
-     * 付款狀態
-     * 可選值：
-     * <ul>
-     *   <li>"PAID"：已付款</li>
-     *   <li>"FAILED"：付款失敗</li>
-     *   <li>"REFUNDED"：已退款</li>
-     * </ul>
-     */
-    private String paymentStatus;
-
-    /**
-     * （可選）支付平臺交易編號
-     *
-     * 用於支付對帳、問題排查及客服查詢。
-     */
-    private String transactionNo;
+    private String paymentStatus;   // PENDING/PAID/FAILED/REFUNDED
+    private String transactionNo;   // 可為 null
 }

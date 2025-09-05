@@ -1,4 +1,3 @@
-
 package com.ryanshiun.seniorscare.caregiver.dto.caregiverAppointment;
 
 import lombok.AllArgsConstructor;
@@ -12,18 +11,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CaregiverAppointmentCreateDto {
-    private Integer memberId;
-    private Integer caregiverId;
-    private LocalDateTime scheduledAt;
-    private LocalDateTime endTime;
-    private String status = "scheduled";
-    private Boolean isBlocked = false;
-    private Integer serviceTypeId;
-    private String serviceLocation;
-    private BigDecimal totalAmount;
-    private String notes;
-    private String blockType;
-    private String createdByType = "system";
-    private Integer createdByMemberId;
-    private Integer createdByEmployeeId;
+
+  private Integer memberId;
+  private Integer caregiverId;
+  private LocalDateTime scheduledAt;
+  private LocalDateTime endTime;
+  private String status = "pending";
+  private Boolean isBlocked = false;
+  private Integer serviceTypeId;
+  private String serviceLocation;
+  private BigDecimal totalAmount;
+  private String notes;
+  private String blockType;
+
 }

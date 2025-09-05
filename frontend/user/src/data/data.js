@@ -32,37 +32,7 @@ import blog01 from '@/assets/img/home-v2/blog-01.jpg'
 import blog02 from '@/assets/img/home-v2/blog-02.jpg'
 import blog03 from '@/assets/img/home-v2/blog-03.jpg'
 
-import partner1 from '@/assets/img/partner/partner-1.svg'
-import partner2 from '@/assets/img/partner/partner-2.svg'
-import partner3 from '@/assets/img/partner/partner-3.svg'
-import partner4 from '@/assets/img/partner/partner-4.svg'
-import partner5 from '@/assets/img/partner/partner-5.svg'
-import partner6 from '@/assets/img/partner/partner-6.svg'
-import partner7 from '@/assets/img/partner/partner-7.svg'
-import partner8 from '@/assets/img/partner/partner-8.svg'
-import partner9 from '@/assets/img/partner/partner-9.svg'
-import partner10 from '@/assets/img/partner/partner-10.svg'
-import partner11 from '@/assets/img/partner/partner-11.svg'
-import partner12 from '@/assets/img/partner/partner-12.svg'
-import partner13 from '@/assets/img/partner/partner-13.svg'
-import partner14 from '@/assets/img/partner/partner-14.svg'
-import partner15 from '@/assets/img/partner/partner-15.svg'
-
-import partner01 from '@/assets/img/partner/partner-light-1.svg'
-import partner02 from '@/assets/img/partner/partner-light-2.svg'
-import partner03 from '@/assets/img/partner/partner-light-3.svg'
-import partner04 from '@/assets/img/partner/partner-light-4.svg'
-import partner05 from '@/assets/img/partner/partner-light-5.svg'
-import partner06 from '@/assets/img/partner/partner-light-6.svg'
-import partner07 from '@/assets/img/partner/partner-light-7.svg'
-import partner08 from '@/assets/img/partner/partner-light-8.svg'
-import partner09 from '@/assets/img/partner/partner-light-9.svg'
-import partner010 from '@/assets/img/partner/partner-light-10.svg'
-import partner011 from '@/assets/img/partner/partner-light-11.svg'
-import partner012 from '@/assets/img/partner/partner-light-12.svg'
-import partner013 from '@/assets/img/partner/partner-light-13.svg'
-import partner014 from '@/assets/img/partner/partner-light-14.svg'
-import partner015 from '@/assets/img/partner/partner-light-15.svg'
+import partner01 from '@/assets/img/partner/ispan07.png' // 只引入 ispan.jpg
 
 import product1 from '@/assets/img/home-v2/product/pdct-01.jpg'
 import product2 from '@/assets/img/home-v2/product/pdct-02.jpg'
@@ -318,33 +288,9 @@ export const blogData = [
 
 export const partnerData = [
     {
-        image:partner1,
-        image2:partner01
-    },
-    {
-        image:partner2,
-        image2:partner02
-    },
-    {
-        image:partner3,
-        image2:partner03
-    },
-    {
-        image:partner4,
-        image2:partner04
-    },
-    {
-        image:partner5,
-        image2:partner05
-    },
-    {
-        image:partner6,
-        image2:partner06
-    },
-    {
-        image:partner8,
-        image2:partner08
-    },
+        image: partner01,   // 主要圖片
+        image2: partner01   // 用於品牌區塊顯示
+    }
 ]
 
 export const productSlider = [
@@ -526,84 +472,6 @@ export const teamDataTwo = [
         class1:'order-2',
         class2:'sm:flex items-center justify-center px-5 py-[30px] order-1',
         delay:'600'
-    },
-]
-
-export const partnerDataTwo = [
-    {
-        image:partner1,
-        image2:partner01,
-        delay:'100'
-    },
-    {
-        image:partner2,
-        image2:partner02,
-        delay:'200'
-    },
-    {
-        image:partner3,
-        image2:partner03,
-        delay:'300'
-    },
-    {
-        image:partner4,
-        image2:partner04,
-        delay:'400'
-    },
-    {
-        image:partner5,
-        image2:partner05,
-        delay:'500'
-    },
-    {
-        image:partner6,
-        image2:partner06,
-        delay:'600'
-    },
-    {
-        image:partner7,
-        image2:partner07,
-        delay:'700'
-    },
-    {
-        image:partner8,
-        image2:partner08,
-        delay:'800'
-    },
-    {
-        image:partner9,
-        image2:partner09,
-        delay:'900'
-    },
-    {
-        image:partner10,
-        image2:partner010,
-        delay:'1000'
-    },
-    {
-        image:partner11,
-        image2:partner011,
-        delay:'1100'
-    },
-    {
-        image:partner12,
-        image2:partner012,
-        delay:'1200'
-    },
-    {
-        image:partner13,
-        image2:partner013,
-        delay:'1300'    
-    },
-    {
-        image:partner14,
-        image2:partner014,
-        delay:'1400'
-    },
-    {
-        image:partner15,
-        image2:partner015,
-        delay:'1500'
     },
 ]
 

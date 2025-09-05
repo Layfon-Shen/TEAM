@@ -1,4 +1,4 @@
-package com.ryanshiun.seniorscare.activity.DAO;
+package com.ryanshiun.seniorscare.activity.dao;
 
 import com.ryanshiun.seniorscare.activity.dto.ActivityQueryParams;
 import com.ryanshiun.seniorscare.activity.model.Activity;
@@ -19,4 +19,10 @@ public interface ActivityDao {
     
     List<Activity> getActivities(ActivityQueryParams activityqueryParams);
 
+    int holdSeatsForRegistration(Integer activityId, int num, java.time.LocalDate today);
+
+    int adjustSeats(Integer activityId, int delta, java.time.LocalDate today);
+
+
+    void endRegistration(Integer id);
 }

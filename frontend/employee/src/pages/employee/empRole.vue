@@ -122,11 +122,6 @@ export default {
         
       } catch (error) {
         console.error('[EmpRole.vue] 處理職位更新失敗:', error);
-        showToast({
-          title: '職位更新失敗',
-          message:'更新職位時發生錯誤',
-          type: 'error'
-        });
       } finally {
         isLoading.value = false;
       }

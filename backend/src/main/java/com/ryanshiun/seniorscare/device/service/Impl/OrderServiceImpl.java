@@ -20,6 +20,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import com.ryanshiun.seniorscare.device.model.enums.OrderStatus;
+import com.ryanshiun.seniorscare.device.model.enums.OrderStatusRule;
+
+import com.ryanshiun.seniorscare.device.dto.PaymentMethodUpdateRequest;
+import com.ryanshiun.seniorscare.device.model.enums.PaymentMethod;
+
+import com.ryanshiun.seniorscare.device.dto.GuestCheckoutRequest;
 /**
  * 下單流程（唯一入口）：
  * 讀購物車 → 算總額 → 建主檔 → 逐筆建明細（用 device 當下單價）→ 扣庫存 → 清購物車 → 成功
@@ -31,6 +38,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDao orderDao;   // DAO：只做 CRUD/小步驟
     private final CartDao cartDao;     // 取得購物車/明細、清購物車
     private final DeviceDao deviceDao; // 取得商品單價（若 CartItem 沒帶單價時）
+
+    private boolean isBlank(String s) { return s == null || s.trim().isEmpty(); }
 
     /** 建立新訂單（由購物車轉訂單） */
     @Override
@@ -97,15 +106,70 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.findAll(status);
     }
 
-    /** 更新訂單狀態 */
+    // 更新訂單狀態（透過規則驗證轉換合法性）
     @Override
     public void updateStatus(Integer id, StatusUpdateRequest req) {
-        orderDao.updateStatus(id, req.getStatus());
+        var order = orderDao.findById(id);
+        if (order == null) throw new IllegalArgumentException("訂單不存在");
+
+        // 將 DB/請求的字串轉 enum
+        OrderStatus from = OrderStatus.valueOf(order.getStatus());
+        OrderStatus to   = OrderStatus.valueOf(req.getStatus());
+
+        // 檢查是否允許由 from → to
+        if (!OrderStatusRule.canTransit(from, to)) {
+            throw new IllegalStateException("狀態不可由 " + from + " → " + to);
+        }
+
+        // 通過才更新
+        orderDao.updateStatus(id, to.name());
     }
 
-    /** 更新付款狀態 */
+    // 更新付款狀態（透過規則驗證；PAID 時 DAO 端負責寫 paid_at）
     @Override
     public void updatePayment(Integer id, PaymentUpdateRequest req) {
-        orderDao.updatePayment(id, req.getPaymentStatus(), req.getTransactionNo());
+        var order = orderDao.findById(id);
+        if (order == null) throw new IllegalArgumentException("訂單不存在");
+
+        // 規則：PENDING -> PAID/FAILED；PAID -> REFUNDED
+        var from = com.ryanshiun.seniorscare.device.model.enums.PaymentStatus.valueOf(order.getPaymentStatus());
+        var to   = com.ryanshiun.seniorscare.device.model.enums.PaymentStatus.valueOf(req.getPaymentStatus());
+        if (!com.ryanshiun.seniorscare.device.model.enums.PaymentStatusRule.canTransit(from, to)) {
+            throw new IllegalStateException("付款狀態不可由 " + from + " → " + to);
+        }
+
+        orderDao.updatePayment(id, to.name(), req.getTransactionNo()); // PAID 時會補 paid_at
     }
+
+    @Override
+    public void updatePaymentMethod(Integer id, PaymentMethodUpdateRequest req) {
+        var order = orderDao.findById(id);
+        if (order == null) throw new IllegalArgumentException("訂單不存在");
+
+        // 只允許：訂單狀態 PENDING 且 付款狀態 PENDING
+        if (!"PENDING".equals(order.getStatus())) {
+            throw new IllegalStateException("僅在訂單狀態為 PENDING（待出貨）時允許變更付款方式");
+        }
+        if (!"PENDING".equals(order.getPaymentStatus())) {
+            throw new IllegalStateException("僅在付款狀態為 PENDING（尚未付款）時允許變更付款方式");
+        }
+
+        // 轉成 enum 驗證值（再次保險）
+        PaymentMethod.valueOf(req.getPaymentMethod());
+
+        // 更新 DB
+        orderDao.updatePaymentMethod(id, req.getPaymentMethod());
+    }
+
+    //刪除訂單
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void delete(Integer id) {
+        // 先刪明細再刪主檔，避免外鍵限制
+        orderDao.deleteOrderItems(id);
+        orderDao.deleteOrder(id);
+    }
+
+
+
 }

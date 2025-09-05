@@ -1,10 +1,5 @@
 <template>
   <div class="dashboard-main-body">
-    <Breadcrumb title="新增復康巴士" :breadcrumbs="[
-      { name: '復康巴士列表', path: '/rehabus/list' },
-      { name: '新增復康巴士' }
-    ]" />
-
 
     <!-- 引入復康巴士新增元件 -->
     <AddBus @add-success="handleAddSuccess" />

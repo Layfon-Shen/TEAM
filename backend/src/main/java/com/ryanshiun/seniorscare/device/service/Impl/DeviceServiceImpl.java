@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +54,13 @@ public class DeviceServiceImpl implements DeviceService {
      * 更新輔具資料，回傳是否成功
      */
     @Override
-    public boolean updateDevice(Device device) {
+    public boolean updateDevice(Device device) throws URISyntaxException {
+        String oldUrl = device.getImage();
+
+        // 去除 http
+        String newUrl = Paths.get(new URI(oldUrl).getPath()).getFileName().toString();
+
+        device.setImage(newUrl);
         return deviceDao.update(device); // 呼叫 DAO 更新操作
     }
 

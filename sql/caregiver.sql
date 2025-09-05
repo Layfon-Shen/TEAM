@@ -1,34 +1,15 @@
-----員工資料表(宗勳)
--- CREATE TABLE employee (
---    emp_id          INT             IDENTITY(1,1)   PRIMARY KEY,         
---    emp_name        NVARCHAR(50)    NOT NULL UNIQUE,                     
---    password        NVARCHAR(255)   NOT NULL,                            
---    email           NVARCHAR(200)   NULL,                                
---    role            NVARCHAR(50)    NOT NULL DEFAULT 'Employee',          
---    is_active        BIT             NOT NULL DEFAULT 1,                 
---    createdAt       DATE       NOT NULL DEFAULT SYSUTCDATETIME(),        
---    updatedAt       DATE       NOT NULL DEFAULT SYSUTCDATETIME(),        
---)
+SELECT * FROM caregiver;
+SELECT * FROM service_type;
+SELECT * FROM caregiver_appointment;
+SELECT * FROM member;
 
-----會員資料表(宗勳)
---CREATE TABLE member (
---      member_id       INT            IDENTITY(1,1)    PRIMARY KEY,
---      member_name       NVARCHAR(50)   NOT NULL,
---      main_phone      VARCHAR(20)    NOT NULL          UNIQUE,
---      gender          BIT            NOT NULL,
---      birthday      DATE           NOT NULL,
---      is_active       BIT                           DEFAULT 1,
---      ban_at          DATE           NULL,
---      ban_reason      NVARCHAR(MAX)  NULL,
---      caregiver_name  NVARCHAR(50)   NULL,
---      caregiver_phone VARCHAR(20)                      UNIQUE,
---      created_at      DATETIME2                     DEFAULT SYSUTCDATETIME(),
---      login_at        DATETIME2                     DEFAULT SYSUTCDATETIME()
---);
+SELECT caregiver_id, average_rating, total_ratings, total_points 
+FROM caregiver 
+WHERE caregiver_id = 1;
 
 -- 照服員基本資料
 CREATE TABLE caregiver (
-    caregiver_id      INT IDENTITY(1,1) PRIMARY KEY,      -- 照服員ID
+    caregiver_id      INT IDENTITY(1000,1) PRIMARY KEY,      -- 照服員ID
     chinese_name      NVARCHAR(100) NOT NULL,             -- 中文姓名
     gender            BIT NOT NULL,                       -- 性別 (0=女性, 1=男性)
     phone             VARCHAR(20) NOT NULL UNIQUE,        -- 連絡電話
@@ -42,7 +23,8 @@ CREATE TABLE caregiver (
     total_points      INT DEFAULT 0,                      -- 總得分
     is_active         BIT DEFAULT 1,                      -- 是否在職(1=在職, 0=離職)
     created_at        DATETIME2 DEFAULT SYSDATETIME(),    -- 創立時間
-    updated_at        DATETIME2 DEFAULT SYSDATETIME()     -- 修改時間
+    updated_at        DATETIME2 DEFAULT SYSDATETIME(),    -- 修改時間
+	self_introduction NVARCHAR(1000) NULL,                -- 自我介紹 
 );
 
 -- 服務類型收費表
@@ -63,18 +45,13 @@ CREATE TABLE caregiver_appointment (
     caregiver_id            INT NOT NULL,                             -- 照服員ID
     scheduled_at            DATETIME2 NOT NULL,                       -- 預約開始時間
     end_time                DATETIME2 NOT NULL,                       -- 預約結束時間
-    status                  VARCHAR(20) NOT NULL DEFAULT 'scheduled', -- 預約狀態
+    status                  VARCHAR(20) NOT NULL DEFAULT 'pending',   -- 預約狀態
     is_blocked              BIT NOT NULL DEFAULT 0,                   -- 是否為虛擬訂單(0=真實客戶 1=虛擬)
     service_type_id         INT,                                      -- 服務類型ID
     service_location        NVARCHAR(200),                            -- 服務地點
     total_amount            DECIMAL(10,2),                            -- 總金額
-    notes                   NVARCHAR(500),                            -- 備註
+    notes                   NVARCHAR(1000),                            -- 備註
     block_type              VARCHAR(50),                              -- 虛擬訂單原因
-    
-    -- 建立者相關欄位
-    created_by_type         VARCHAR(20) NOT NULL DEFAULT 'system',    -- 建立者類型
-    created_by_member_id    INT NULL,                                 -- 會員ID (當建立者為會員時)
-    created_by_employee_id  INT NULL,                                 -- 員工ID (當建立者為員工時)
     
     -- 評分相關欄位
     rating_score            INT NULL,                                 -- 評價分數 (1-5分)
@@ -84,93 +61,60 @@ CREATE TABLE caregiver_appointment (
     created_at              DATETIME2 NOT NULL DEFAULT SYSDATETIME(), -- 建立時間 
     cancelled_at            DATETIME2 NULL,                           -- 取消時間
     
-	--CONSTRAINT FK_appointment_member 
- --       FOREIGN KEY (member_id) REFERENCES member(member_id),
- --   CONSTRAINT FK_appointment_caregiver 
- --       FOREIGN KEY (caregiver_id) REFERENCES caregiver(caregiver_id),
- --   CONSTRAINT FK_appointment_service_type 
- --       FOREIGN KEY (service_type_id) REFERENCES service_type(service_type_id),
- --   CONSTRAINT FK_appointment_created_by_member 
- --       FOREIGN KEY (created_by_member_id) REFERENCES member(member_id),
- --   CONSTRAINT FK_appointment_created_by_employee 
- --       FOREIGN KEY (created_by_employee_id) REFERENCES employee(emp_id),
+	CONSTRAINT FK_appointment_member 
+        FOREIGN KEY (member_id) REFERENCES member(member_id),
+    CONSTRAINT FK_appointment_caregiver 
+        FOREIGN KEY (caregiver_id) REFERENCES caregiver(caregiver_id),
+    CONSTRAINT FK_appointment_service_type 
+        FOREIGN KEY (service_type_id) REFERENCES service_type(service_type_id),
+
     
- --   -- 檢查約束
- --   CONSTRAINT chk_appointment_status 
- --       CHECK (status IN ('scheduled', 'completed', 'cancelled')),
- --   CONSTRAINT chk_appointment_block_type 
- --       CHECK (block_type IN ('off-work', 'break', 'training', 'leave', 'unavailable')),
- --   CONSTRAINT chk_appointment_created_by_type 
- --       CHECK (created_by_type IN ('caregiver', 'member', 'employee')),
- --   CONSTRAINT chk_appointment_created_by_logic 
- --       CHECK (
- --           (created_by_type = 'member' AND created_by_member_id IS NOT NULL AND created_by_employee_id IS NULL) OR
- --           (created_by_type = 'employee' AND created_by_employee_id IS NOT NULL AND created_by_member_id IS NULL) 
- --       ),
- --   CONSTRAINT chk_appointment_time_logic 
- --       CHECK (end_time > scheduled_at),
- --   CONSTRAINT chk_appointment_rating_score 
- --       CHECK (rating_score IS NULL OR rating_score BETWEEN 1 AND 5),
- --   CONSTRAINT chk_appointment_rating_logic 
- --       CHECK (
- --           (is_rated = 0 AND rating_score IS NULL AND rated_at IS NULL) OR
- --           (is_rated = 1 AND rating_score IS NOT NULL AND rated_at IS NOT NULL)
- --       )
+    -- 檢查約束
+    CONSTRAINT chk_appointment_status 
+        CHECK (status IN ('pending','approved','rejected', 'completed', 'cancelled')),
+    CONSTRAINT chk_appointment_block_type 
+        CHECK (block_type IN ('off-work', 'break', 'training', 'leave', 'unavailable')),
+    CONSTRAINT chk_appointment_time_logic 
+        CHECK (end_time > scheduled_at),
+    CONSTRAINT chk_appointment_rating_score 
+        CHECK (rating_score IS NULL OR rating_score BETWEEN 1 AND 5),
+    CONSTRAINT chk_appointment_rating_logic 
+        CHECK (
+            (is_rated = 0 AND rating_score IS NULL AND rated_at IS NULL) OR
+            (is_rated = 1 AND rating_score IS NOT NULL AND rated_at IS NOT NULL)
+        )
 );
 
 
 -----測試資料----------------
-INSERT INTO caregiver (
-    chinese_name, gender, phone, email, experience_years, photo, 
-    address, service_area, average_rating, total_ratings, total_points, is_active
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'王美華', 0, '0912345678', N'wang.meihua@email.com', 5, N'/images/caregiver/caregiver_photo/caregiver01.png', N'桃園市桃園區中正路200號', N'桃園區', 4.50, 120, 540, 1, '2025-08-28 19:12:29.2887210', '2025-08-29 17:21:18.2289537', N'我具備專業技能，能協助復健與日常照護，熱心可靠。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'陳志明', 1, '0923456789', N'chen.zhiming@email.com', 3, N'/images/caregiver/caregiver_photo/caregiver02.png', N'桃園市中壢區環中東路300號', N'中壢區', 4.20, 85, 357, 1, '2025-08-28 19:12:29.2887210', '2025-08-29 17:21:31.0718226', N'我重視人與人間溫暖互動，專注於長者心理與身體需求。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'李淑芳', 0, '0934567890', N'li.shufang@email.com', 8, N'/images/caregiver/caregiver_photo/caregiver03.png', N'桃園市平鎮區復興路120號', N'平鎮區', 4.80, 201, 964, 1, '2025-08-28 19:12:29.2887210', '2025-08-29 17:13:55.6159876', N'多年經驗累積專業，提供安全貼心的日常照顧與陪伴。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'張建國', 1, '0945678901', N'zhang.jianguo@email.com', 2, N'/images/caregiver/caregiver_photo/caregiver04.png', N'桃園市龜山區文化一路88號', N'龜山區', 3.90, 45, 176, 1, '2025-08-28 19:12:29.2887210', '2025-08-28 19:12:29.2887210', N'以耐心與責任感為本，希望帶給長者安心與信任的服務。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'劉惠玲', 0, '0956789012', N'liu.huiling@email.com', 6, N'/images/caregiver/caregiver_photo/caregiver05.png', N'桃園市八德區介壽路150號', N'八德區', 4.60, 160, 736, 1, '2025-08-28 19:12:29.2887210', '2025-08-28 19:12:29.2887210', N'我樂於協助日常生活，細心體貼，讓家屬能更放心。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'黃俊傑', 1, '0967890123', N'huang.junjie@email.com', 4, N'/images/caregiver/caregiver_photo/caregiver06.png', N'桃園市蘆竹區南崁路250號', N'蘆竹區', 4.10, 95, 390, 1, '2025-08-28 19:12:29.2887210', '2025-08-28 19:12:29.2887210', N'我具備專業技能，能協助復健與日常照護，熱心可靠。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'吳秀英', 0, '0978901234', N'wu.xiuying@email.com', 7, N'/images/caregiver/caregiver_photo/caregiver07.png', N'桃園市大溪區員林路180號', N'大溪區', 4.70, 180, 846, 1, '2025-08-28 19:12:29.2887210', '2025-08-28 19:12:29.2887210', N'我重視人與人間溫暖互動，專注於長者心理與身體需求。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'林文華', 1, '0989012345', N'lin.wenhua@email.com', 1, N'/images/caregiver/caregiver_photo/caregiver08.png', N'桃園市楊梅區光華街120號', N'楊梅區', 3.80, 25, 95, 1, '2025-08-28 19:12:29.2887210', '2025-08-28 19:12:29.2887210', N'初入行但充滿熱忱，用心學習，希望帶來最好的照護。');
+INSERT INTO caregiver (chinese_name, gender, phone, email, experience_years, photo, address, service_area, average_rating, total_ratings, total_points, is_active, created_at, updated_at, self_introduction) VALUES (N'吳麗雲', 0, '0934567891', N'test2@example.com', 1, N'/images/caregiver/caregiver_photo/caregiver10.png', N'桃園市中壢區中山路200號', N'新屋區', 4.00, 1, 4, 1, '2025-08-29 13:55:18.1212985', '2025-08-29 13:58:32.6614754', N'這是測試用自我介紹');
+
+
+ -- 插入5服務類型測試資料
+INSERT INTO service_type (
+    service_name, hourly_rate, description, is_active
 ) VALUES 
--- 照服員 1
-('王美華', 0, '0912345678', 'wang.meihua@email.com', 5, 
- '/images/caregiver/caregiver_photo/ce233903-616a-48fa-9270-7f76c4468c42.jpg', '台北市大安區忠孝東路四段100號', 
- '台北市大安區', 4.5, 120, 540, 1),
+-- 服務類型 1: 基礎照護
+('基礎生活照護', 300, '協助長者日常生活起居，包含用餐協助、個人衛生清潔、穿衣換裝、基本活動協助等服務', 1),
 
--- 照服員 2  
-('陳志明', 1, '0923456789', 'chen.zhiming@email.com', 3, 
- '/images/caregiver/caregiver_photo/01889a62-8e13-4830-8f82-72f43987ade1.jpg', '新北市板橋區中山路二段50號', 
- '新北市板橋區', 4.2, 85, 357, 1),
+-- 服務類型 2: 醫療照護  
+('醫療照護服務', 450, '提供基礎醫療照護，包含血壓血糖監測、用藥提醒、傷口護理、復健協助等專業照護服務', 1),
 
--- 照服員 3
-('李淑芳', 0, '0934567890', 'li.shufang@email.com', 8, 
- '/images/caregiver/caregiver_photo/9e0ea10b-0992-4d79-829d-e0603090f144.jpg', '台中市西屯區台灣大道三段200號', 
- '台中市西屯區', 4.8, 200, 960, 1),
+-- 服務類型 3: 家事服務
+('居家清潔服務', 250, '協助環境清潔整理，包含房間清掃、衣物整理、簡單家事處理、環境維護等服務', 1),
 
--- 照服員 4
-('張建國', 1, '0945678901', 'zhang.jianguo@email.com', 2, 
- '/images/caregiver/caregiver_photo/1d701e1d-f0c9-49ba-a077-4ebea8cec91d.jpg', '高雄市左營區博愛二路300號', 
- '高雄市左營區', 3.9, 45, 176, 1),
+-- 服務類型 4: 陪伴服務
+('陪伴關懷服務', 280, '提供情感支持與陪伴，包含聊天談話、休閒活動陪伴、外出購物協助、社交互動等服務', 1),
 
--- 照服員 5
-('劉惠玲', 0, '0956789012', 'liu.huiling@email.com', 6, 
- '/images/caregiver/caregiver_photo/bff42fae-e3ff-476b-b0c6-3a7b56c1aede.jpg', '台南市中西區中正路150號', 
- '台南市中西區', 4.6, 160, 736, 1),
+-- 服務類型 5: 專業照護
+('專業護理照護', 550, '提供專業護理服務，包含管路護理、呼吸照護、特殊醫療設備操作、重症照護等高專業度服務', 1);
 
--- 照服員 6
-('黃俊傑', 1, '0967890123', 'huang.junjie@email.com', 4, 
- '/images/caregiver/caregiver_photo/f3dee67e-960a-48f0-bbe9-914654e9d1b0.jpg', '桃園市中壢區中央路250號', 
- '桃園市中壢區', 4.1, 95, 390, 1),
-
--- 照服員 7
-('吳秀英', 0, '0978901234', 'wu.xiuying@email.com', 7, 
- '/images/caregiver/caregiver_photo/4f1f3b46-29ed-40f0-a514-0a8f0d68afe3.jpg', '新竹市東區光復路一段180號', 
- '新竹市東區', 4.7, 180, 846, 1),
-
--- 照服員 8
-('林文華', 1, '0989012345', 'lin.wenhua@email.com', 1, 
- '/images/caregiver/caregiver_photo/71ee2b27-d813-41d5-a0f4-a216f14caf6c.jpg', '嘉義市西區民生北路120號', 
- '嘉義市西區', 3.8, 25, 95, 1),
-
--- 照服員 9
-('蔡雅婷', 0, '0990123456', 'cai.yating@email.com', 9, 
- '/images/caregiver/caregiver_photo/64b271ed-8d19-43dd-b6fa-7906e51d452b.jpg', '彰化市中正路二段80號', 
- '彰化市', 4.9, 250, 1225, 1),
-
--- 照服員 10
-('鄭大偉', 1, '0901234567', 'zheng.dawei@email.com', 3, 
- '/images/caregiver/caregiver_photo/04485c31-2d66-4775-8ed8-05028885e936.jpg', '屏東市中山路350號', 
- '屏東市', 4.0, 70, 280, 1);
 

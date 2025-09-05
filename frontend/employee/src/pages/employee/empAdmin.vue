@@ -178,11 +178,6 @@ export default {
         await fetchEmployees();
 
       } catch (err) {
-        showToast({
-          title: '操作失敗',
-          message: '變更員工狀態時發生錯誤',
-          type: 'error'
-        });
       } finally {
         isLoading.value = false;
       }

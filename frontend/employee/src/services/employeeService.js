@@ -242,8 +242,6 @@ export const employeeService = {
       const errorMsg = error.response ? 
         `錯誤 ${error.response.status}: ${error.response.data?.message || '未知錯誤'}` : 
         error.message || '無法連接到伺服器';
-      
-      console.error(`更新員工 ID ${empId} 失敗:`, errorMsg);
       throw new Error(errorMsg);
     }
   },

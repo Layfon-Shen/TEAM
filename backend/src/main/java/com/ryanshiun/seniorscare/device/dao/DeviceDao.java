@@ -77,4 +77,6 @@ public interface DeviceDao {
      */
     boolean updateImage(Integer id, String filename);
 
+
+
 }

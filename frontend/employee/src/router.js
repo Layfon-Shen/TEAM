@@ -18,33 +18,45 @@ import EmpList from "./pages/employee/empList.vue";
 import EmpRole from "./pages/employee/empRole.vue";
 import EmpAdmin from "./pages/employee/empAdmin.vue";
 import ViewProfile from "./pages/employee/view-profile.vue";
+
+// Member - 會員管理模組
+import Member from "./pages/member/member.vue";
+
 // authentication
 import SignIn from "./pages/authentication/sign-in.vue";
 import ForgotPassword from "./pages/authentication/forgot-password.vue";
 
-// Rehabus
-import RehabusList from "./pages/rehabus/rehabus-list.vue";
-import RehabusAdd from "./pages/rehabus/rehabus-add.vue";
-import RehabusEdit from "./pages/rehabus/rehabus-edit.vue";
+// ================================
+// rehabus 模組 
+// ================================
+import RehabusList from './pages/rehabus/rehabus-list.vue';
+import RehabusAdd from './pages/rehabus/rehabus-add.vue';
+import RehabusEdit from './pages/rehabus/rehabus-edit.vue';
+import BusReservation from './pages/rehabus/reservation-list.vue';
+import ReservationAdd from './pages/rehabus/reservation-add.vue';
+import ReservationEdit from './pages/rehabus/reservation-edit.vue';
 
-// Rehabus (FareZone)
-import FareZoneList from "./pages/rehabus/farezone-list.vue";
-import FareZoneAdd from "./pages/rehabus/farezone-add.vue";
-import FareZoneEdit from "./pages/rehabus/farezone-edit.vue";
+// ================================
+// 🏠 roomType 模組 - 現有實作的頁面
+// ================================
+import RoomList from './pages/roomType/RoomList.vue'              // roomType: 房型列表頁面（整合搜尋和匯入匯出功能）
+import RoomAdd from './pages/roomType/RoomAdd.vue'                // roomType: 新增房型頁面
+import RoomEdit from './pages/roomType/RoomEdit.vue'              // roomType: 編輯房型頁面（整合 RoomTypeFeatureController）
+import RoomPreview from './pages/roomType/RoomPreview.vue'        // roomType: 房型詳情預覽（整合收藏統計）
+import FacilityList from './pages/roomType/FacilityList.vue'
+import ReservationList from './pages/roomType/ReservationList.vue';
+import FeatureList from './pages/roomType/FeatureList.vue';
+import Dashbroard from './pages/roomType/Dashbroard.vue'; // 房型統計儀表板元件
 
-//RoomType
-import RoomAdd from "./pages/roomType/RoomAdd.vue";
-import RoomEdit from "./pages/roomType/RoomEdit.vue";
-import RoomList from "./pages/roomType/RoomList.vue";
-import RoomPreview from "./pages/roomType/RoomPreview.vue";
 
 // device 輔具管理相關頁面
-import DeviceList from "./pages/device/device.vue";
-import DeviceCategory from "./pages/device/category.vue";
-import DeviceImport from "./pages/device/import.vue";
+import Device from './pages/device/device.vue';
+import DeviceCategory from './pages/device/category.vue';
+import Order from './pages/device/order.vue'
 
 // Activity - 活動管理模組
 import ActivityBlog from "./pages/activity/activityblog.vue";
+import ActivityReservationList from "./pages/activity/activityReservationList.vue";
 
 // Caregiver
 import CaregiverList from "./pages/caregiver/CaregiverList.vue";
@@ -121,117 +133,213 @@ const routes = [
     },
   },
 
-  // Rehabus (復康巴士管理) - 需要認證
+  // Member - 會員管理路由
   {
-    path: "/rehabus/list",
+    path: "/member",
+    component: Member,
+    meta: {
+      requiresAuth: true,
+      title: "會員管理",
+    },
+  },
+
+  // Rehabus (復康巴士管理)
+  {
+    path: '/rehabus/list',
     component: RehabusList,
     meta: {
-      requiresAuth: true,
-      title: "復康巴士列表",
-    },
+      title: '復康巴士列表'
+    }
   },
   {
-    path: "/rehabus/add",
+    path: '/rehabus/add',
     component: RehabusAdd,
     meta: {
-      requiresAuth: true,
-      title: "新增復康巴士",
-    },
+      title: '新增復康巴士'
+    }
   },
   {
-    path: "/rehabus/edit/:id",
+    path: '/rehabus/edit/:id',
     component: RehabusEdit,
     meta: {
-      requiresAuth: true,
-      title: "編輯復康巴士",
-    },
+      title: '編輯復康巴士'
+    }
   },
 
-  // FareZone (行政區管理) - 需要認證
+  // Reservation (預約管理)
   {
-    path: "/farezone/list",
-    component: FareZoneList,
+    path: '/reservation/list',
+    component: BusReservation,
     meta: {
-      requiresAuth: true,
-      title: "行政區列表",
-    },
+      title: '預約列表'
+    }
   },
   {
-    path: "/farezone/add",
-    component: FareZoneAdd,
+    path: '/reservation/add',
+    component: ReservationAdd,
     meta: {
-      requiresAuth: true,
-      title: "新增行政區",
-    },
+      title: '新增預約'
+    }
   },
   {
-    path: "/farezone/edit/:id",
-    component: FareZoneEdit,
-    meta: {
-      requiresAuth: true,
-      title: "編輯行政區",
-    },
+    name: 'reservation-edit',
+    path: '/reservation/edit/:id(\\d+)',   // 只接受數字 id，避免亂跳
+    component: ReservationEdit,
+    props: route => ({ id: Number(route.params.id) }), // 直接以 props 傳給頁面
+    meta: { title: '編輯預約' }
   },
 
-  // RoomType 房型模組 - 需要認證
+  // ================================
+  // 🏠 roomType 模組 - 房型管理路由（已實作）
+  // ================================
   {
-    path: "/roomType/RoomList",
+    path: '/room-types',
+    redirect: '/room-types/list',
+    meta: {
+      title: '房型管理',
+      module: 'roomType',
+      description: 'roomType 模組主路由，重新導向到房型列表'
+    }
+  },
+  {
+    path: '/room-types/list',
     component: RoomList,
     meta: {
-      requiresAuth: true,
-      title: "房型列表",
-    },
+      title: '房型列表',
+      module: 'roomType',
+      apis: ['RoomTypeController.getAllRoomTypes', 'RoomTypeController.searchRoomTypes', 'RoomTypeController.importCSV', 'RoomTypeController.exportCSV'],
+      description: 'roomType: 房型列表頁面，整合搜尋和匯入匯出功能',
+      breadcrumb: ['房型管理', '房型列表']
+    }
   },
   {
-    path: "/roomType/RoomPreview/:id",
-    component: RoomPreview,
-    meta: {
-      requiresAuth: true,
-      title: "房型簡介",
-    },
-  },
-  {
-    path: "/roomType/RoomEdit/:id",
-    component: RoomEdit,
-    meta: {
-      requiresAuth: true,
-      title: "編輯房型",
-    },
-  },
-  {
-    path: "/roomType/RoomAdd",
+    path: '/room-types/add',
     component: RoomAdd,
     meta: {
-      requiresAuth: true,
-      title: "新增房型",
-    },
+      title: '新增房型',
+      module: 'roomType',
+      apis: ['RoomTypeController.addRoomType', 'FeatureController.getAllFeatures'],
+      description: 'roomType: 新增房型頁面，支援圖片上傳和特徵關聯',
+      breadcrumb: ['房型管理', '新增房型']
+    }
   },
+  {
+    path: '/room-types/:id/edit',
+    component: RoomEdit,
+    props: true,
+    meta: {
+      title: '編輯房型',
+      module: 'roomType',
+      apis: ['RoomTypeController.updateRoomType', 'RoomTypeFeatureController', 'FeatureController.getAllFeatures'],
+      description: 'roomType: 編輯房型頁面，整合特徵關聯管理',
+      breadcrumb: ['房型管理', '編輯房型']
+    }
+  },
+  {
+    path: '/room-types/:id/preview',
+    component: RoomPreview,
+    props: true,
+    meta: {
+      title: '房型詳情',
+      module: 'roomType',
+      apis: ['RoomTypeController.getRoomTypeById', 'FavoriteRoomController.getFavoriteCountByRoomType', 'RoomCommentController.getCommentsByRoomType'],
+      description: 'roomType: 房型詳情頁面，整合收藏統計和評論顯示',
+      breadcrumb: ['房型管理', '房型詳情']
+    }
+  },
+  {
+    path: '/roomType/FacilityList',
+    component: FacilityList,
+    meta: {
+      title: '設施列表',
+      module: 'roomType',
+      description: 'roomType: 設施列表頁面',
+      breadcrumb: ['房型管理', '設施列表']
+    }
+  },
+  {
+    path: '/roomType/ReservationList',
+    component: ReservationList,
+    meta: {
+      title: '預約管理',
+      module: 'roomType',
+      description: 'roomType: 預約狀態管理頁面',
+      breadcrumb: ['房型管理', '預約管理']
+    }
+  },
+  {
+    path: '/roomType/CommentList',
+    component: () => import('@/pages/roomType/CommentList.vue'),
+    meta: {
+      title: '留言管理',
+      module: 'roomType',
+      description: 'roomType: 留言審核管理頁面',
+      breadcrumb: ['房型管理', '留言管理']
+    }
+  },
+  {
+    path: '/roomType/FeatureList',
+    component: FeatureList,
+    meta: {
+      title: '特徵標籤管理',
+      module: 'roomType',
+      description: 'roomType: 特徵標籤管理頁面',
+      breadcrumb: ['房型管理', '特徵標籤管理']
+    }
+  },
+
+
+  // ================================
+  // 🏠 roomType 模組 - 新增統計儀表板路由
+  // ================================
+  {
+    path: '/roomType/Dashboard',
+    component: Dashbroard,
+    meta: {
+      title: '統計儀表板',
+      module: 'roomType',
+      description: '房型統計儀表板頁面',
+      breadcrumb: ['房型管理', '統計儀表板']
+    }
+  },
+
+
+  // ================================
+  // 🔄 roomType 模組向下相容路由重新導向
+  // ================================
+  { path: '/roomType/RoomList', redirect: '/room-types/list', meta: { deprecated: true, newPath: '/room-types/list' } },
+  { path: '/roomType/RoomAdd', redirect: '/room-types/add', meta: { deprecated: true, newPath: '/room-types/add' } },
+  { path: '/roomType/RoomEdit/:id', redirect: to => `/room-types/${to.params.id}/edit`, meta: { deprecated: true } },
+  { path: '/roomType/RoomPreview/:id', redirect: to => `/room-types/${to.params.id}/preview`, meta: { deprecated: true } },
+
 
   // device 輔具管理相關路由 - 需要認證
   {
-    path: "/device/list",
-    component: DeviceList,
+    path: '/device/list',
+    component: Device,
+    name: 'DeviceList',
     meta: {
-      requiresAuth: true,
-      title: "輔具列表",
-    },
+      title: '輔具列表'
+    }
   },
+
   {
-    path: "/device/category",
+    path: '/device/category',
     component: DeviceCategory,
+    name: 'DeviceCategory',
     meta: {
-      requiresAuth: true,
-      title: "輔具分類",
-    },
+      title: '輔具分類管理'
+    }
   },
   {
-    path: "/device/import",
-    component: DeviceImport,
+    path: '/device/order',
+    component: Order,
+    name: 'OrderList',
     meta: {
-      requiresAuth: true,
-      title: "輔具批次匯入",
-    },
+      title: '訂單列表'
+    }
   },
+
 
   // Activity - 活動管理路由 - 需要認證
   {
@@ -242,16 +350,51 @@ const routes = [
       title: "活動管理",
     },
   },
-
-  // caregiver - 需要認證
   {
-    path: "/caregiver/list",
-    name: "CaregiverList",
-    component: CaregiverList,
+    path: "/activity/reservation",
+    component: ActivityReservationList,
     meta: {
       requiresAuth: true,
-      title: "照服員列表",
+      title: "活動報名管理",
     },
+  },
+
+  // caregiver - 需要認證
+  // caregiver - 需要認證
+ {
+    path: '/caregiver/list',
+    name: 'CaregiverList',
+    component: () => import('@/pages/caregiver/CaregiverList.vue')
+  },
+  {
+    path: '/caregiver/appointments', // 對應 order-list
+    name: 'AppointmentList',
+    component: () => import('@/pages/caregiver/AppointmentList.vue')
+  },
+  {
+    path: '/caregiver/appointments/:id', // 預約詳情頁面
+    name: 'AppointmentDetail',
+    component: () => import('@/pages/caregiver/AppointmentDetail.vue'),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      title: "預約詳情",
+    }
+  },
+  {
+    path: '/caregiver/appointments/:id/edit', // 編輯預約頁面
+    name: 'AppointmentEdit',
+    component: () => import('@/pages/caregiver/AppointmentEdit.vue'),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      title: "編輯預約訂單",
+    }
+  },
+  {
+    path: '/caregiver/schedule',
+    name: 'ScheduleList', 
+    component: () => import('@/pages/caregiver/ScheduleList.vue')
   },
   {
     path: "/add-care-worker",
@@ -298,7 +441,7 @@ const routes = [
       requiresAuth: true,
     },
   },
-
+  
   // Authentication - 登入頁面
   {
     path: "/sign-in",

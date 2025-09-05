@@ -1,4 +1,4 @@
-package com.ryanshiun.seniorscare.activity.DAO;
+package com.ryanshiun.seniorscare.activity.dao;
 
 import java.util.List;
 import com.ryanshiun.seniorscare.activity.model.ActivityOrganizer;

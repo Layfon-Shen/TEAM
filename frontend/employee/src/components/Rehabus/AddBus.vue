@@ -5,31 +5,20 @@
         <div class="col-xxl-6 col-xl-8 col-lg-10">
           <div class="card border">
             <div class="card-body">
-              <h6 class="text-md text-primary-light mb-16">復康巴士資料</h6>
+
 
               <!-- 巴士圖片上傳區塊 -->
               <div class="mb-24 mt-16">
                 <div class="avatar-upload">
                   <div class="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">
-                    <input
-                      type="file"
-                      id="imageUpload"
-                      accept=".png, .jpg, .jpeg"
-                      @change="onImageChange"
-                      hidden
-                    />
-                    <label
-                      for="imageUpload"
-                      class="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle"
-                    >
+                    <input type="file" id="imageUpload" accept=".png, .jpg, .jpeg" @change="onImageChange" hidden />
+                    <label for="imageUpload"
+                      class="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle">
                       <iconify-icon icon="solar:camera-outline" class="icon"></iconify-icon>
                     </label>
                   </div>
                   <div class="avatar-preview">
-                    <div
-                      v-bind:style="{ backgroundImage: 'url(' + imagePreview + ')' }"
-                      id="imagePreview"
-                    ></div>
+                    <div v-bind:style="{ backgroundImage: 'url(' + imagePreview + ')' }" id="imagePreview"></div>
                   </div>
                 </div>
               </div>
@@ -42,13 +31,8 @@
                   <label for="carDealership" class="form-label fw-semibold text-primary-light text-sm mb-8">
                     車行名稱 <span class="text-danger-600">*</span>
                   </label>
-                  <input
-                    v-model="form.carDealership"
-                    type="text"
-                    class="form-control radius-8"
-                    id="carDealership"
-                    placeholder="請輸入車行名稱"
-                  />
+                  <input v-model="form.carDealership" type="text" class="form-control radius-8" id="carDealership"
+                    placeholder="請輸入車行名稱" />
                 </div>
 
                 <!-- 汽車廠牌欄位 -->
@@ -56,13 +40,8 @@
                   <label for="busBrand" class="form-label fw-semibold text-primary-light text-sm mb-8">
                     汽車廠牌 <span class="text-danger-600">*</span>
                   </label>
-                  <input
-                    v-model="form.busBrand"
-                    type="text"
-                    class="form-control radius-8"
-                    id="busBrand"
-                    placeholder="請輸入汽車廠牌"
-                  />
+                  <input v-model="form.busBrand" type="text" class="form-control radius-8" id="busBrand"
+                    placeholder="請輸入汽車廠牌" />
                 </div>
 
                 <!-- 汽車型號欄位 -->
@@ -70,13 +49,8 @@
                   <label for="busModel" class="form-label fw-semibold text-primary-light text-sm mb-8">
                     型號 <span class="text-danger-600">*</span>
                   </label>
-                  <input
-                    v-model="form.busModel"
-                    type="text"
-                    class="form-control radius-8"
-                    id="busModel"
-                    placeholder="請輸入汽車型號"
-                  />
+                  <input v-model="form.busModel" type="text" class="form-control radius-8" id="busModel"
+                    placeholder="請輸入汽車型號" />
                 </div>
 
                 <!-- 一般座位數量 -->
@@ -84,14 +58,8 @@
                   <label for="seatCapacity" class="form-label fw-semibold text-primary-light text-sm mb-8">
                     一般座位數量 <span class="text-danger-600">*</span>
                   </label>
-                  <input
-                    v-model.number="form.seatCapacity"
-                    type="number"
-                    min="0"
-                    class="form-control radius-8"
-                    id="seatCapacity"
-                    placeholder="請輸入一般座位數量"
-                  />
+                  <input v-model.number="form.seatCapacity" type="number" min="0" class="form-control radius-8"
+                    id="seatCapacity" placeholder="請輸入一般座位數量" />
                 </div>
 
                 <!-- 輪椅座位數量 -->
@@ -99,14 +67,8 @@
                   <label for="wheelchairCapacity" class="form-label fw-semibold text-primary-light text-sm mb-8">
                     輪椅座位數量 <span class="text-danger-600">*</span>
                   </label>
-                  <input
-                    v-model.number="form.wheelchairCapacity"
-                    type="number"
-                    min="0"
-                    class="form-control radius-8"
-                    id="wheelchairCapacity"
-                    placeholder="請輸入輪椅座位數量"
-                  />
+                  <input v-model.number="form.wheelchairCapacity" type="number" min="0" class="form-control radius-8"
+                    id="wheelchairCapacity" placeholder="請輸入輪椅座位數量" />
                 </div>
 
                 <!-- 車牌號碼 -->
@@ -114,13 +76,8 @@
                   <label for="licensePlate" class="form-label fw-semibold text-primary-light text-sm mb-8">
                     車牌號碼 <span class="text-danger-600">*</span>
                   </label>
-                  <input
-                    v-model="form.licensePlate"
-                    type="text"
-                    class="form-control radius-8"
-                    id="licensePlate"
-                    placeholder="請輸入車牌號碼"
-                  />
+                  <input v-model="form.licensePlate" type="text" class="form-control radius-8" id="licensePlate"
+                    placeholder="請輸入車牌號碼" />
                 </div>
 
                 <!-- 派遣狀態 -->
@@ -135,31 +92,25 @@
                       <option value="dispatched">已派遣</option>
                       <option value="maintenance">維修中</option>
                     </select>
-                    <!-- 派遣狀態指示圖示 -->
-                    <div class="position-absolute top-50 end-0 translate-middle-y me-10 d-flex align-items-center">
-                      <span 
-                        v-if="form.status" 
-                        :class="getStatusClass(form.status)" 
-                        class="status-badge d-inline-block rounded-circle me-2">
-                      </span>
-                      <span class="text-muted">{{ getStatusText(form.status) }}</span>
-                    </div>
+
                   </div>
                 </div>
-                
+
                 <!-- 按鈕區域 -->
                 <div class="d-flex align-items-center justify-content-center gap-3">
-                  <button
-                    type="button"
-                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-                    @click="cancelForm"
-                  >
-                    取消
+
+                  <!-- 測試按鈕 -->
+                  <button type="button" class="btn btn-outline-secondary action-btn" @click="fillTestData">
+                    測試
                   </button>
-                  <button
-                    type="submit"
-                    class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
-                  >
+
+                  <!-- 取消 / 儲存 -->
+                  <button type="button"
+                    class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
+                    @click="cancelForm">
+                    清除
+                  </button>
+                  <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
                     儲存
                   </button>
                 </div>
@@ -169,24 +120,22 @@
         </div>
       </div>
     </div>
-  </div> <!-- 修正：加上最外層的結束標籤 -->
+  </div>
 </template>
 
 <script>
 import { ref } from 'vue';
-import busImage from "@/assets/images/bus/bus.jpg"; 
+import busImage from "@/assets/images/bus.jpg";
 import { rehabusService } from '@/services/rehabusService';
 import { useToast } from '@/composables/useToast'; // 引入 toast 元件
+import { useConfirmDialog } from '@/composables/useConfirmDialog'; // 引入自訂確認對話框
 
 export default {
   name: 'addBus',
-  // 聲明組件發射的事件
   emits: ['add-success'],
   setup(props, { emit }) {
-
-    // 使用 Toast 通知功能
-    const { showToast } = useToast(); 
-
+    const { showToast } = useToast();
+    const { showConfirmDialog } = useConfirmDialog(); // 取得自訂確認對話框方法
     // 表單資料
     const form = ref({
       carDealership: '',
@@ -271,13 +220,11 @@ export default {
     };
 
     /**
-     * 取消表單編輯，提示確認
+     * 取消表單編輯，提示確認（改用自訂確認對話框）
      */
+
     const cancelForm = () => {
-      // 添加確認提示，避免意外清除表單
-      if (confirm('確定要取消編輯嗎？所有未儲存的變更將會遺失。')) {
         resetForm();
-      }
     };
 
     /**
@@ -286,11 +233,15 @@ export default {
     const submitForm = async () => {
       try {
         // 表單驗證
-        if (!form.value.carDealership || 
-            !form.value.busBrand || 
-            !form.value.busModel ||
-            !form.value.licensePlate ) {
-          alert('請填寫所有必填欄位');
+        if (!form.value.carDealership ||
+          !form.value.busBrand ||
+          !form.value.busModel ||
+          !form.value.licensePlate) {
+          showToast({
+            title: '請填寫所有欄位',
+            message: '車行名稱、汽車廠牌、型號和車牌號碼為必填欄位。',
+            type: 'warning'
+          });
           return;
         }
 
@@ -311,39 +262,55 @@ export default {
           // 如需上傳圖片，可在此加入圖片資料
         });
 
-        // 顯示操作成功通知
         showToast({
           title: '新增成功',
-          message: `成功新增一台巴士`,
+          message: '復康巴士資料新增成功！',
           type: 'success'
         });
-        
+
         // 修正：發射成功事件通知父元件後再重置表單
         emit('add-success');
 
         // 發送全域事件，通知列表頁面刷新
         window.dispatchEvent(new CustomEvent('bus-status-updated'));
-        
+
         // 重置表單
         resetForm();
       } catch (error) {
+        console.error('新增復康巴士失敗:', error);
         showToast({
-          title: '新增失敗 !',
-          message: error.message,
+          title: '新增失敗',
+          message: '復康巴士資料新增失敗！',
           type: 'error'
         });
       }
     };
+
+    /** 填入測試資料 */
+    const fillTestData = () => {
+      form.value = {
+        carDealership: '生通股份有限公司',
+        busBrand: 'Hyundai',
+        busModel: 'STARIA',
+        seatCapacity: 2,
+        wheelchairCapacity: 1,
+        licensePlate: 'WEZ-3088',
+        status: 'available'
+      };
+    };
+
+
 
     return {
       form,
       imagePreview,
       onImageChange,
       cancelForm,
-      resetForm, // 添加 resetForm 到返回值
+      resetForm,
       submitForm,
       getStatusClass,
-      getStatusText
+      getStatusText,
+      fillTestData
     };
   }
 };
@@ -365,7 +332,7 @@ export default {
   overflow: hidden;
 }
 
-.avatar-preview > div {
+.avatar-preview>div {
   width: 100%;
   height: 100%;
   border-radius: 100%;
@@ -375,8 +342,8 @@ export default {
 }
 
 /* 巴士圖片預覽調整樣式 - 可能需要根據實際巴士圖片調整 */
-.avatar-preview > div {
-  border: 8px; 
+.avatar-preview>div {
+  border: 8px;
 }
 
 /* 狀態標記樣式 */
@@ -403,6 +370,16 @@ export default {
 
 /* 下拉選單樣式調整，適應狀態圖示 */
 select.form-select {
-  padding-right: 100px; /* 留出足夠空間顯示狀態圖示 */
+  padding-right: 100px;
+  /* 留出足夠空間顯示狀態圖示 */
+}
+
+
+.action-btn {
+  min-width: 120px;
+  padding: 12px 56px;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.2;
 }
 </style>
